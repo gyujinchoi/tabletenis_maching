@@ -1,3 +1,3 @@
 # tabletenis_maching
 DB Project
-join seungwoo.ha
+join seungwoo.ha in server
