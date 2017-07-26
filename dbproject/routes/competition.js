@@ -1,29 +1,59 @@
 var express = require('express');
 var router = express.Router();
+var competition_model=require('../models/competition_model');
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-	
-	var mysql      = require('mysql');
-	var connection = mysql.createConnection({
-	      host     : '52.79.188.98',
-	      user     : 'root',
-	      password : 'New1234!',
-	      database : 'Mysql',
-	      port : 3306
+//GET
+router.get('/:id?',function(req,res,next){
+	if(req.params.id){
+		competition_model.getCompetitionById(req.params.id,function(err,rows){
+		if(err){
+			res.json(err);
+		} else{
+			res.json(rows);
+		}
+		 });
+	} else{
+		competition_model.getAllCompetitions(function(err,rows){
+			if(err) {
+				res.json(err);
+			} else{
+				res.json(rows);
+			}
+		});
+	}
+ });
+
+//POST
+router.post('/',function(req,res,next){
+	competition_model.addCompetition(req.body,function(err,count){
+	  if(err){
+		  res.json(err);
+	  }else{
+		  res.json(req.body);//or return count for 1 &amp;amp;amp; 0
+	  }
 	});
+ });
 
-	connection.connect();
-
-	connection.query('SELECT 5 + 5 AS solution', function (error, results, fields) {
-	      if (error) throw error;
-	        console.log('The solution is: ', results[0].solution);
+//DELETE
+router.delete('/:id',function(req,res,next){
+	competition_model.deleteCompetition(req.params.id,function(err,count){
+	 	if(err){
+		  res.json(err);
+	 	}else{
+		  res.json(count);
+		}
 	});
-
-	connection.end();
-	
-	
-  res.send('respond with a resource');
 });
 
-module.exports = router;
+//PUT
+router.put('/:id',function(req,res,next){
+	competition_model.updateCompetition(req.params.id,req.body,function(err,rows){
+		if(err){
+		  res.json(err);
+		}else{
+		  res.json(rows);
+		}
+	});
+ });
+
+ module.exports=router;

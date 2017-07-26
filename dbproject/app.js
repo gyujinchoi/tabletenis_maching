@@ -4,28 +4,16 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var cors = require('cors');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+var competition = require('./routes/competition');
+
+
 
 var app = express();
-var mysql      = require('mysql');
-var connection = mysql.createConnection({
-      host     : 'localhost',
-      user     : 'root',
-      password : 'New1234!',
-      database : 'Mysql',
-      port : 3306
-});
 
-connection.connect();
-
-connection.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
-      if (error) throw error;
-        console.log('The solution is: ', results[0].solution);
-});
-
-connection.end();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -38,9 +26,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(cors());
+
 app.use('/', index);
 app.use('/users', users);
+app.use('/competition', competition);
 
+console.log("Start Server");
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
