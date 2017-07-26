@@ -8,16 +8,16 @@ var competition_model={
 	},
 	//ID로 조회
 	getCompetitionById:function(id,callback){
-		return db.query("SELECT * FROM tb_test where Id=?",[id],callback);
+		return db.query("SELECT * FROM tb_test WHERE id=?",[id],callback);
 	},
 	
 	//대회 추가
 	addCompetition:function(competition,callback){
-		return db.query("INSERT INTO tb_test values(?,?,?)",[competition.Id,competition.Name,competition.phone_num],callback);
+		return db.query("INSERT INTO tb_test values(?,?,?)",[competition.id,competition.name,competition.phone_num],callback);
 	},
 	//대회 삭제
 	deleteCompetition:function(id,callback){
-	  return db.query("DELECT FROM tb_test where Id=?",[id],callback);
+	  return db.query("DELECT FROM tb_test where id=?",[id],callback);
 	 },
 	 
 	//정보 업데이트
