@@ -1,7 +1,6 @@
 var db=require('../dbconnection'); //reference of dbconnection.js
  
 var competition_model={
-
 	//전체 조회
 	getAllCompetitions:function(callback){
 		return db.query("SELECT * FROM tb_test",callback);

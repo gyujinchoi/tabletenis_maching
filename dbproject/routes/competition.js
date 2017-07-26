@@ -3,7 +3,9 @@ var router = express.Router();
 var competition_model=require('../models/competition_model');
 
 //GET
+
 router.get('/:id?',function(req,res,next){
+
 	if(req.params.id){
 		competition_model.getCompetitionById(req.params.id,function(err,rows){
 		if(err){
