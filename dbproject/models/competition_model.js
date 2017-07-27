@@ -17,19 +17,73 @@ var competition_model={
     The supported range is '1000-01-01 00:00:00' to '9999-12-31 23:59:59'.
     */
     addCompetition:function(competition,callback){
-        //console.log(competition.title.replace(/"/g, ""), competition.start_date, competition.end_date, competition.phone, competition.location, competition.account, competition.bank);
+        /*
+            Table: competition
+            Columns:
+            competition_id	int(11) AI PK
+            title	varchar(45)
+            start_date	datetime
+            end_date	datetime
+            phone	varchar(13)
+            location	varchar(45)
+            account	bigint(45)
+            bank	varchar(45)
+         */
         return db.query("insert into competition (title, start_date, end_date, phone, location, account, bank)\n values (?,?,?,?,?,?,?);",
-            [competition.title.replace(/"/g, ""), competition.start_date.replace(/"/g, ""),
-                competition.end_date.replace(/"/g, ""), competition.phone.replace(/"/g, ""),
-                competition.location.replace(/"/g, ""), competition.account.replace(/"/g, ""),
-                competition.bank.replace(/"/g, "")],
-            callback);
+                        [competition.title.replace(/"/g, ""), competition.start_date.replace(/"/g, ""),
+                        competition.end_date.replace(/"/g, ""), competition.phone.replace(/"/g, ""),
+                        competition.location.replace(/"/g, ""), competition.account.replace(/"/g, ""),
+                        competition.bank.replace(/"/g, "")],
+                        callback);
     },
 
     getCompetition:function(competition,callback){
         return db.query("select * from competition where title=? and start_date=? and phone=?",
-            [competition.title.replace(/"/g, ""), competition.start_date.replace(/"/g, ""), competition.phone.replace(/"/g, "")],
+                        [competition.title.replace(/"/g, ""), competition.start_date.replace(/"/g, ""), competition.phone.replace(/"/g, "")],
+                        callback);
+    },
+
+    addEvent:function(event, callback){
+        /*
+            Table: event
+            Columns:
+            event_id	int(11) AI PK
+            competition_id	int(11)
+            max_grade	int(1)
+            min_grade	int(1)
+            title	varchar(45)
+            type	set('M','F','MM','FF','MF')
+            rule_of_league	int(11)
+         */
+        return db.query("insert into tabletennis_competitions.event (competition_id, max_grade, min_grade, title, type, rule_of_league)\n"+
+                        " select ?,?,?,?,?,? from dual\n"+
+                        " where not exists (select * from tabletennis_competitions.event where (competition_id=? and title=? and type=?))",
+                        [event.competition_id, event.max_grade, event.min_grade,
+                        "'"+event.title+"'", event.type, event.rule_of_league,
+                        event.competition_id, "'"+event.title+"'", event.type],
+                        callback);
+    },
+
+    getEvent:function(event, callback){
+        return db.query("select * from event where competition_id=? and title=? and type=?",
+                        [event.competition_id, "'"+event.title+"'", event.type],
+                        callback);
+    },
+
+    getEventbyCompetitionId:function(event, callback){
+        return db.query("select * from event where competition_id=?",
+            [event.competition_id],
             callback);
+    },
+
+    getEventbyId:function(event_id, callback){
+        return db.query("select * from event where event_id=?",
+            [event_id],
+            callback);
+    },
+
+    getAllEvents:function(callback) {
+        return db.query("select * from event", callback);
     },
 
     //대회 삭제

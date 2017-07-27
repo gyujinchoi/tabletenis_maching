@@ -25,6 +25,11 @@ function getAllPlayers(res){
     });
 }
 
+router.get('/',function(req,res,next){
+    getAllPlayers(res);
+});
+
+
 //GET
 router.get('/id?',function(req,res,next){
     if(req.query.id){
@@ -89,6 +94,46 @@ router.get('/group?',function(req,res,next){
         res.json("Not yes implemented!")
     } else
         player_model.getAllGroups(function(err,rows){
+            if(err)
+                res.json(err);
+            else
+                res.json(rows);
+        });
+});
+
+router.get('/apply?', function(req, res, next){
+    if(req.query.player_id && req.query.group_id && req.query.event_id) {
+        player_model.applyCompetition(req.query.player_id,
+            req.query.group_id, req.query.event_id, function(err, rows){
+                if(err)
+                    res.json(err);
+                else
+                    player_model.getParticipant(req.query.player_id,
+                        req.query.event_id, function(err, rows) {
+                            if(err)
+                                res.json(err);
+                            else
+                                res.json(rows);
+                    });
+            });
+    }else
+        res.json("error : player_id and group_id, event_id are necessary!");
+});
+
+router.get('/participant?', function(req, res, next){
+    if(req.query.player_id) {
+        var event_id = -1;
+        if(req.query.event_id)
+            event_id =req.query.event_id;
+        player_model.getParticipant(req.query.player_id, event_id,function(err, rows){
+            if(err)
+                res.json(err);
+            else
+                res.json(rows);
+        });
+
+    }else
+        player_model.getAllParticipants(function(err,rows){
             if(err)
                 res.json(err);
             else
