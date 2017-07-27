@@ -1,3 +1,4 @@
 dbproject/node_modules
 .idea
 *.bak
+npm-debug.log

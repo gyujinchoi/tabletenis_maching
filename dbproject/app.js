@@ -9,7 +9,7 @@ var cors = require('cors');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var competition = require('./routes/competition');
-
+var player = require('./routes/player');
 
 
 var app = express();
@@ -30,7 +30,9 @@ app.use(cors());
 
 app.use('/', index);
 app.use('/users', users);
+app.use('/users/apply', users);
 app.use('/competition', competition);
+app.use('/player', player)
 
 console.log("Start Server");
 // catch 404 and forward to error handler
@@ -52,3 +54,5 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
+app.listen(3000);
