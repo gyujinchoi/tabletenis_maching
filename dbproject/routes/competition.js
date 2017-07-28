@@ -13,6 +13,17 @@ router.get('/',function(req,res,next){
         }
     });
 });
+
+router.get('/getCompetitionTtile',function(req,res,next){
+    competition_model.getAllCompetitions_title(function(err,rows){
+        if(err) {
+            res.json(err);
+        } else{
+            res.json(rows);
+        }
+    });
+});
+
 router.get('/id?',function(req,res,next){
 
 	if(req.params.id){
