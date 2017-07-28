@@ -9,10 +9,45 @@ Licence URI: http://www.os-templates.com/template-terms
 <html lang="">
 <!-- To declare your language - read more here: https://www.w3.org/International/questions/qa-html-language-declarations -->
 <head>
-<title>Chevesic</title>
+<title>LEAGUE MANAGER</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link href="layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
+<script type="text/javascript">
+
+	//page load시 대회 정보 및 클럽 정보 조회
+	window.onload = function(){
+		
+		//대회 정보 조회가 아니고..이벤트 조회 필요할듯...?
+		var xhttp = new XMLHttpRequest();
+	    var url = "http://52.79.188.98:3000/competition/getCompetitionTitle";
+	    xhttp.open("get", url, false);
+	    xhttp.setRequestHeader("Content-type", "application/json");
+	    xhttp.send();
+	    
+	    if (xhttp.readyState === 4) {
+	        if (xhttp.status === 200) {
+	          //alert(xhttp.responseText);
+	          //정상 여부 확인 필요 할듯
+	        } else {
+	          alert("저장에 실패 했습니다.");
+	        }
+	      }
+	    
+	    //클럽 정보 조회
+	    
+	    //select box에 추가 필요
+	}
+
+	function savePlayer()
+	{	
+		alert("공사중!!");
+	    //applyCompetition
+	  
+	}
+</script>
+
+
 </head>
 <body id="top">
 <!-- ################################################################################################ -->
@@ -40,32 +75,9 @@ Licence URI: http://www.os-templates.com/template-terms
       <!-- ################################################################################################ -->
       <ul class="clear">
         <li><a href="index.html">Home</a></li>
-        <li class="active"><a class="drop" href="#">Pages</a>
-          <ul>
-            <li><a href="gallery.html">Gallery</a></li>
-            <li class="active"><a href="full-width.html">Full Width</a></li>
-            <li><a href="sidebar-left.html">Sidebar Left</a></li>
-            <li><a href="sidebar-right.html">Sidebar Right</a></li>
-            <li><a href="basic-grid.html">Basic Grid</a></li>
-          </ul>
-        </li>
-        <li><a class="drop" href="#">Dropdown</a>
-          <ul>
-            <li><a href="#">Level 2</a></li>
-            <li><a class="drop" href="#">Level 2 + Drop</a>
-              <ul>
-                <li><a href="#">Level 3</a></li>
-                <li><a href="#">Level 3</a></li>
-                <li><a href="#">Level 3</a></li>
-              </ul>
-            </li>
-            <li><a href="#">Level 2</a></li>
-          </ul>
-        </li>
-        <li><a href="#">Link Text</a></li>
-        <li><a href="#">Link Text</a></li>
-        <li><a href="#">Link Text</a></li>
-        <li><a href="#">Long Link Text</a></li>
+        <li><a href="makeleague.html">MAKE LEAGUE</a></li>
+        <li class="active"><a href="#">JOIN LEAGUE</a></li>
+        <li><a href="leagueView.html">GAME TABLE</a></li>
       </ul>
       <!-- ################################################################################################ -->
     </nav>
@@ -80,15 +92,15 @@ Licence URI: http://www.os-templates.com/template-terms
     
       <h6 class="heading">Join Game</h6>
       
-      <form method="post" action="#">
+       <form name="playerFrm" method="get" onSubmit="JavaScript:savePlayer()">
         <fieldset>
-          <legend>Newsletter:</legend>
-          <input class="btmspace-15" type="text" value="" placeholder="Name of league">
-          <input class="btmspace-15" type="text" value="" placeholder="Name of Club">
-          <input class="btmspace-15" type="text" value="" placeholder="Your Name">
-          <input class="btmspace-15" type="text" value="" placeholder="Phone">
-          <input class="btmspace-15" type="text" value="" placeholder="Grade">
-          <a class="btn inverse" href="makeGameType.html">submit</a>
+			<legend>Newsletter:</legend>
+			<input id="Competition" class="btmspace-15" type="text" value="" placeholder="Name of Competition">	
+			<input id="Club" class="btmspace-15" type="text" value="" placeholder="Name of Club">
+			<input id="Name" class="btmspace-15" type="text" value="" placeholder="Your Name">
+			<input id="Phone" class="btmspace-15" type="text" value="" placeholder="Phone">
+			<input id="Grade" class="btmspace-15" type="text" value="" placeholder="Grade">
+			<input type="submit" value="참가 신청"  style="cursor:pointer"></input>
           </fieldset>
       </form>
     
