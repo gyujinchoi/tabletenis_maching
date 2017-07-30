@@ -4,6 +4,8 @@ var player_model = require('../models/player_model');
 var competition_model=require('../models/competition_model');
 var async = require('async');
 
+var num_of_grades = 10;
+
 var competition_obj = {
     title : "",
     start_date: "",
@@ -35,13 +37,63 @@ var game_obj = {
     parent_a: 0,
     parent_b: 0
 };
-/*
-function getPlayersforMatches(index, parti_data, err, player, callback_for_done) {
-    player_model.getPlayerById(parti_data.participants[index].player_id, function (err, player) {
 
+function generateMatches(players, max_grade, min_grade, num_of_game_players) {
+    //num_of_players : 조별 인원
+
+    var total_players = players[0].length;
+    var num_of_game = total_players / num_of_game_players;
+    var mod_of_players = total_players % num_of_game_players;
+    var num_of_matches = num_of_game_players * (num_of_game_players - 1) / 2;
+
+    if (mod_of_players > 0)
+        ++num_of_game;
+
+    var players_per_group = new Array(num_of_grades);
+    var games = new Array(num_of_game);
+
+    for (var index = 0; index < num_of_grades; index++)
+        players_per_group[index] = new Array();
+
+    for (index = 0; index < players[0].length; index++) {
+        players_per_group[players[0][index][0].grade].push(players[0][index][0]);
     }
+
+    console.log(total_players);
+    console.log(num_of_game);
+    console.log(mod_of_players);
+    console.log(min_grade);
+    console.log(max_grade);
+
+    for (index = 0; index < num_of_game; ++index) {
+        var game_data = {
+            order: index,
+            round: 0,
+            matches: new Array(),
+            players: new Array()
+        };
+        games[index] = game_data;
+    }
+
+    for (var grade_idx = max_grade, index=0; grade_idx <= min_grade; grade_idx++, index=0) {
+        if (players_per_group[grade_idx].length > 0)
+            players_per_group[grade_idx].sort(function (a, b) {
+                return 0.5 - Math.random()
+            });
+
+        while(players_per_group[grade_idx].length != 0) {
+            if (games[index].players.length < num_of_game_players)
+                games[index].players.push(players_per_group[grade_idx].pop());
+            index = (index+1)%num_of_game;
+        }
+    }
+
+    return games;
+    //조별 인원 구성완료.
+    //console.log(games);
+
 }
-*/
+
 function getPlayerForMatches(event_id, parti_data, callback_for_done) {
 
     var num_of_matches = parti_data.event.rule_of_league;
@@ -93,12 +145,11 @@ router.get('/autogen?', function(req, res, next){
                                     res.status(401);
                                     res.json(err)
                                 }else {
-                                    console.log(req.query.event_id);
                                     parti_data.event_id = req.query.event_id;
                                     parti_data.participants = parti_rows;
                                     parti_data.event = event_rows[0];
 
-                                    auto_generate_matches(req.query.event_id, parti_data, 0, callback);
+                                    getPlayerForMatches(req.query.event_id, parti_data, callback);
                                 }
                             });
                         }
@@ -106,9 +157,11 @@ router.get('/autogen?', function(req, res, next){
                 }
             ],
             function(err, players) {
+                var games;
                 parti_data.players = players;
-
-                res.json(parti_data);
+                //console.log(parti_data.event.rule_of_league);
+                games = generateMatches(players, parti_data.event.max_grade, parti_data.event.min_grade, parti_data.event.rule_of_league);
+                res.json(games);
             });
     }else
         res.json("error: event id must be inputed.")

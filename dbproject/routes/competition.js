@@ -9,7 +9,8 @@ var competition = {
     phone: "",
     location: "",
     account: 0,
-    bank: ""
+    bank: "",
+    passwd: "0000"
 };
 
 var event = {
@@ -62,6 +63,9 @@ router.get('/add?',function(req,res,next){
         competition.location = req.query.location;
         competition.account = req.query.account;
         competition.bank = req.query.bank;
+
+        if (req.query.passwd)
+            competition.passwd = req.query.passwd;
 
         competition_model.addCompetition(competition,function(err,rows){
             if(err){
