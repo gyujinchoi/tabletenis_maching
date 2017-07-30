@@ -132,6 +132,51 @@ function getPlayerForMatches(evnet_id, parti_data, round, callback_for_done) {
 */
 
 //예선 조를 자동으로 구성한다.
+router.get('/autogen_tmp?', function(req, res, next){
+    if(req.query.event_id) {
+        var event_id = -1;
+        var parti_data = {
+            event: new Object(),
+            participants: new Object(),
+            players: new Array()
+        };
+        async.parallel([
+                function(callback) {
+                    competition_model.getEventbyId(req.query.event_id, function(err, event_rows) {
+                        if (err){
+                            res.json(err);
+                            res.json("error: cannot find event.");
+                        } else {
+                            player_model.getParticipants(-1, req.query.event_id, function (err, parti_rows) {
+                                if (err){
+                                    res.status(401);
+                                    res.json(err)
+                                }else {
+                                    parti_data.event_id = req.query.event_id;
+                                    parti_data.participants = parti_rows;
+                                    parti_data.event = event_rows[0];
+
+                                    getPlayerForMatches(req.query.event_id, parti_data, callback);
+                                }
+                            });
+                        }
+                    });
+                }
+            ],
+            function(err, players) {
+                var games;
+                parti_data.players = players;
+                //console.log(parti_data.event.rule_of_league);
+                //round 0
+                games = generateMatches(players, parti_data.event.event_id, 0, parti_data.event.max_grade, parti_data.event.min_grade, parti_data.event.rule_of_league);
+                res.json(games);
+            });
+    }else
+        res.json("error: event id must be inputed.")
+
+});
+
+//예선 조를 자동으로 구성한다.
 router.get('/autogen?', function(req, res, next){
     if(req.query.event_id) {
         var event_id = -1;
