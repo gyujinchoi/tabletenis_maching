@@ -9,10 +9,30 @@ Licence URI: http://www.os-templates.com/template-terms
 <html lang="">
 <!-- To declare your language - read more here: https://www.w3.org/International/questions/qa-html-language-declarations -->
 <head>
-<title>Chevesic</title>
+<title>LEAGUE MANAGER</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link href="layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
+<script type="text/javascript">
+  function add_item(){
+        // pre_set 에 있는 내용을 읽어와서 처리..
+        var div = document.createElement('div');
+        div.innerHTML = document.getElementById('game_add_set').innerHTML;
+        document.getElementById('game_input_field').appendChild(div);
+    }
+ 
+  function remove_item(obj){
+      // obj.parentNode 를 이용하여 삭제
+      document.getElementById('field').removeChild(obj.parentNode);
+  }
+
+  
+
+</script>
+<script src="serverRestController.js"></script>
+
+
+
 </head>
 <body id="top">
 <!-- ################################################################################################ -->
@@ -40,32 +60,10 @@ Licence URI: http://www.os-templates.com/template-terms
       <!-- ################################################################################################ -->
       <ul class="clear">
         <li><a href="index.html">Home</a></li>
-        <li class="active"><a class="drop" href="#">Pages</a>
-          <ul>
-            <li><a href="gallery.html">Gallery</a></li>
-            <li class="active"><a href="full-width.html">Full Width</a></li>
-            <li><a href="sidebar-left.html">Sidebar Left</a></li>
-            <li><a href="sidebar-right.html">Sidebar Right</a></li>
-            <li><a href="basic-grid.html">Basic Grid</a></li>
-          </ul>
-        </li>
-        <li><a class="drop" href="#">Dropdown</a>
-          <ul>
-            <li><a href="#">Level 2</a></li>
-            <li><a class="drop" href="#">Level 2 + Drop</a>
-              <ul>
-                <li><a href="#">Level 3</a></li>
-                <li><a href="#">Level 3</a></li>
-                <li><a href="#">Level 3</a></li>
-              </ul>
-            </li>
-            <li><a href="#">Level 2</a></li>
-          </ul>
-        </li>
-        <li><a href="#">Link Text</a></li>
-        <li><a href="#">Link Text</a></li>
-        <li><a href="#">Link Text</a></li>
-        <li><a href="#">Long Link Text</a></li>
+        <li class="active"><a href="#">MAKE LEAGUE</a></li>
+        <li><a href="makeGameType.html">MAKE GAME</a></li>
+        <li><a href="joinleague.html">JOIN LEAGUE</a></li>
+        <li><a href="leagueView.html">GAME TABLE</a></li>
       </ul>
       <!-- ################################################################################################ -->
     </nav>
@@ -80,27 +78,46 @@ Licence URI: http://www.os-templates.com/template-terms
     
       <h6 class="heading">make league</h6>
       
-      <form method="post" action="#">
+      <form name="competitonFrm">
         <fieldset>
           <legend>Newsletter:</legend>
-          <input class="btmspace-15" type="text" value="" placeholder="Title">
-          <input class="btmspace-15" type="text" value="" placeholder="StartDate">
-          <input class="btmspace-15" type="text" value="" placeholder="EndDate">
-          <input class="btmspace-15" type="text" value="" placeholder="Place">
-          <input class="btmspace-15" type="text" value="" placeholder="Phone">
-          <a class="btn inverse" href="makeGameType.html">Next</a>
+          <input id="Title" class="btmspace-15" type="text" value="" placeholder="Title">
+          <input id="Phone" class="btmspace-15" type="text" value="" placeholder="Phone">
+          <input id="password" class="btmspace-15" type="text" value="" placeholder="password">
+          <input id="StartDate" class="btmspace-15" type="date" value="" placeholder="StartDate" >
+          <input id="EndDate" class="btmspace-15" type="date" value="" placeholder="EndDate">
+          <input id="Place" class="btmspace-15" type="text" value="" placeholder="Place">
+          <input id="Account" class="btmspace-15" type="text" value="" placeholder="Account">
+          <input id="Bank" class="btmspace-15" type="text" value="" placeholder="Bank">
           </fieldset>
+          <input type="submit" value="등록하기" style="cursor:pointer" onclick="saveCompetition()"></input>
+          
       </form>
+      
     
     <!-- ################################################################################################ -->
   </footer>
 </div></div>
  
+ <div id="game_add_set" style="display:none">
+    
+    <input class="btmspace-15" type="text" value="" placeholder="Game Title">
+    <input class="btmspace-15" type="text" value="" placeholder="Max Grade">
+    <input class="btmspace-15" type="text" value="" placeholder="Min Grade">
+    <input class="btmspace-15" type="text" value="" placeholder="Type (M, F, MF)" data-toggle="dropdown">
+    <input class="btmspace-15" type="text" value="" placeholder="rule_of_league">
+    <!-- <input type="submit" value="delete Game" style="cursor:pointer" onclick="remove_item(this)"></input> -->
+</div>
 <!-- ################################################################################################ -->
 <!-- ################################################################################################ -->
 <!-- ################################################################################################ -->
 <a id="backtotop" href="#top"><i class="fa fa-chevron-up"></i></a>
 <!-- JAVASCRIPTS -->
+<script type="text/javascript">
+document.getElementById('StartDate').valueAsDate = new Date();
+document.getElementById('EndDate').valueAsDate = new Date();
+
+</script>
 <script src="layout/scripts/jquery.min.js"></script>
 <script src="layout/scripts/jquery.backtotop.js"></script>
 <script src="layout/scripts/jquery.mobilemenu.js"></script>

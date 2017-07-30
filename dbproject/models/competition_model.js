@@ -5,6 +5,12 @@ var competition_model={
     getAllCompetitions:function(callback){
         return db.query("SELECT * FROM competition",callback);
     },
+    
+    //대회 이름 조회
+    getAllCompetitions_title:function(callback){
+        return db.query("SELECT title FROM competition",callback);
+    },
+    
     //ID로 조회
     getCompetitionById:function(id,callback){
         return db.query("SELECT * FROM competition WHERE id=?",[competition.id],callback);
