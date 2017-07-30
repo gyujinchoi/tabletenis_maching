@@ -13,6 +13,25 @@ Licence URI: http://www.os-templates.com/template-terms
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link href="layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
+<script type="text/javascript">
+
+var urlParams = location.search.split(/[?&]/).slice(1).map(function(paramPair) {
+
+        return paramPair.split(/=(.+)?/).slice(0, 2);
+
+    }).reduce(function(obj, pairArray) {
+
+        obj[pairArray[0]] = pairArray[1];
+
+        return obj;
+
+    }, {});
+
+  function requestleagueID() {
+    
+  }
+  
+</script>
 </head>
 <body id="top">
 <header id="header" class="hoc clear"> 
@@ -50,27 +69,33 @@ Licence URI: http://www.os-templates.com/template-terms
   <footer id="footer" class="hoc clear"> 
     <!-- ################################################################################################ -->
     
-      <h6 class="heading">make Game events</h6>
+      <h6 class="heading" value="test">make Game events</h6>
+      <label for="name">LeagueName <span>*</span></label>
+       <input id="leaguename" value="" placeholder="Title of league" />
        
-       
-       <div style="float: left; width: 15%;">
-          <button type="submit" value="submit" onclick="add_item()">Add Game</button>
+       <div style="float: left; width: 10%;">
+          <button type="submit" value="submit" onclick="add_item()">Add</button>
           </div>
-          <div style="float: left; width: 15%;">
-          <button type="submit" value="submit" >Game등록하기</button>
-          </div> 
+
+         <!--  <div style="float: left; width: 10%;">
+          <button type="submit" value="submit" >Save Game</button>
+          </div> --> 
           
 
       <form method="post" action="#">
         <fieldset>
           <legend>Newsletter:</legend>
-         <div id="field"></div>
-          <input class="btmspace-15" type="text" value="" placeholder="Title">
-          <input class="btmspace-15" type="text" value="" placeholder="Max Grade">
-          <input class="btmspace-15" type="text" value="" placeholder="Min Grade">
-          <input class="btmspace-15" type="text" value="" placeholder="Type (M, F, MF)">
-          <input class="btmspace-15" type="text" value="" placeholder="rule_of_league">
-
+         <div id="field">
+          <div id="added_0">
+              <input class="btmspace-15" type="text" value="" placeholder="Title *">
+              <input class="btmspace-15" type="text" value="" placeholder="Max Grade *">
+              <input class="btmspace-15" type="text" value="" placeholder="Min Grade *">
+              <input class="btmspace-15" type="text" value="" placeholder="Type (M, F, MF) *">
+              <input class="btmspace-15" type="text" value="" placeholder="rule_of_league *">
+            </div>
+          </div>
+          
+          <input type="submit" value="등록하기" style="cursor:pointer"></input>
           </fieldset>
 
       </form>
@@ -89,9 +114,12 @@ Licence URI: http://www.os-templates.com/template-terms
 <script src="layout/scripts/jquery.mobilemenu.js"></script>
 <script type="text/javascript">
 <!--
+ var count = 1;
     function add_item(){
         // pre_set 에 있는 내용을 읽어와서 처리..
         var div = document.createElement('div');
+        div.id = "added_"+count;
+        count++;
         div.innerHTML = document.getElementById('pre_set').innerHTML;
         document.getElementById('field').appendChild(div);
     }
@@ -99,10 +127,18 @@ Licence URI: http://www.os-templates.com/template-terms
     function remove_item(obj){
         // obj.parentNode 를 이용하여 삭제
         document.getElementById('field').removeChild(obj.parentNode);
+        count--;
+    }
+    if(urlParams.leagueTitle != undefined) {
+      document.getElementById("leaguename").value= urlParams.leagueTitle; 
+    }
+    else {
+
     }
 //-->
 </script>
 <div id="pre_set" style="display:none">
+    <button type="submit" value="submit" onclick="remove_item(this)">delete</button>
     <input class="btmspace-15" type="text" value="" placeholder="Title">
     <input class="btmspace-15" type="text" value="" placeholder="Max Grade">
     <input class="btmspace-15" type="text" value="" placeholder="Min Grade">

@@ -14,33 +14,20 @@ Licence URI: http://www.os-templates.com/template-terms
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link href="layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
 <script type="text/javascript">
-  function saveCompetition()
-  {
-    var xhttp = new XMLHttpRequest();
-    var url = "http://52.79.188.98:3000/competition/add";
-    url += "?title=" + competitonFrm.Title.value;
-    url += "&start_date=" + competitonFrm.StartDate.value;
-    url += "&end_date=" + competitonFrm.EndDate.value;
-    url += "&phone=" + competitonFrm.Place.value;
-    url += "&location=" + competitonFrm.Phone.value;
-    url += "&account=" + competitonFrm.Account.value; 
-    url += "&bank=" + competitonFrm.Bank.value;
-    xhttp.open("get", url, false);
-    xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.send();
-    
-    if (xhttp.readyState === 4) {
-        if (xhttp.status === 200) {
-          alert(xhttp.responseText);
-          //정상 여부 확인 필요 할듯
-        } else {
-          alert("저장에 실패 했습니다.");
-        }
-      }
-	//alert(response);
-  
+  function add_item(){
+        // pre_set 에 있는 내용을 읽어와서 처리..
+        var div = document.createElement('div');
+        div.innerHTML = document.getElementById('game_add_set').innerHTML;
+        document.getElementById('game_input_field').appendChild(div);
+    }
+ 
+  function remove_item(obj){
+      // obj.parentNode 를 이용하여 삭제
+      document.getElementById('field').removeChild(obj.parentNode);
   }
 </script>
+<script src="serverRestController.js"></script>
+
 </head>
 <body id="top">
 <!-- ################################################################################################ -->
@@ -86,31 +73,42 @@ Licence URI: http://www.os-templates.com/template-terms
     
       <h6 class="heading">make league</h6>
       
-      <form name="competitonFrm" method="get" onSubmit="JavaScript:saveCompetition()">
+      <form name="competitonFrm">
         <fieldset>
           <legend>Newsletter:</legend>
           <input id="Title" class="btmspace-15" type="text" value="" placeholder="Title">
+          <input id="Phone" class="btmspace-15" type="text" value="" placeholder="Phone">
+          <input id="password" class="btmspace-15" type="text" value="" placeholder="password">
           <input id="StartDate" class="btmspace-15" type="text" value="2017-07-28 08:00:00" placeholder="StartDate">
           <input id="EndDate" class="btmspace-15" type="text" value="2017-08-10 08:00:00" placeholder="EndDate">
           <input id="Place" class="btmspace-15" type="text" value="" placeholder="Place">
-          <input id="Phone" class="btmspace-15" type="text" value="" placeholder="Phone">
           <input id="Account" class="btmspace-15" type="text" value="" placeholder="Account">
           <input id="Bank" class="btmspace-15" type="text" value="" placeholder="Bank">
-          <input type="submit" value="등록하기" style="cursor:pointer"></input>
-
           </fieldset>
+          <input type="submit" value="등록하기" style="cursor:pointer" onclick="saveCompetition()"></input>
+          
       </form>
-      <button type="submit" value="submit">Game등록하기</button>
+      
     
     <!-- ################################################################################################ -->
   </footer>
 </div></div>
  
+ <div id="game_add_set" style="display:none">
+    
+    <input class="btmspace-15" type="text" value="" placeholder="Game Title">
+    <input class="btmspace-15" type="text" value="" placeholder="Max Grade">
+    <input class="btmspace-15" type="text" value="" placeholder="Min Grade">
+    <input class="btmspace-15" type="text" value="" placeholder="Type (M, F, MF)">
+    <input class="btmspace-15" type="text" value="" placeholder="rule_of_league">
+    <!-- <input type="submit" value="delete Game" style="cursor:pointer" onclick="remove_item(this)"></input> -->
+</div>
 <!-- ################################################################################################ -->
 <!-- ################################################################################################ -->
 <!-- ################################################################################################ -->
 <a id="backtotop" href="#top"><i class="fa fa-chevron-up"></i></a>
 <!-- JAVASCRIPTS -->
+
 <script src="layout/scripts/jquery.min.js"></script>
 <script src="layout/scripts/jquery.backtotop.js"></script>
 <script src="layout/scripts/jquery.mobilemenu.js"></script>
