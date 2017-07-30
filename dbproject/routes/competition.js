@@ -72,17 +72,20 @@ router.get('/add?',function(req,res,next){
                 res.json(err);
             } else{
                 competition_model.getCompetition(competition, function(err, rows){
-                    if(err)
+                    if(err) {
                         res.status(401);
                         res.json(err);
-                    else
+                        }
+                    else {
                         res.json(rows);
+                    }
                 });
             }
         });
-    } else
+    } else {
         res.status(401);
         res.json("error : All informations must be needed to register competition!");
+    }
 });
 
 router.get('/get?',function(req,res,next){
