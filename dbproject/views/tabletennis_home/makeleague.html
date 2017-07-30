@@ -25,8 +25,13 @@ Licence URI: http://www.os-templates.com/template-terms
       // obj.parentNode 를 이용하여 삭제
       document.getElementById('field').removeChild(obj.parentNode);
   }
+
+  
+
 </script>
 <script src="serverRestController.js"></script>
+
+
 
 </head>
 <body id="top">
@@ -79,8 +84,8 @@ Licence URI: http://www.os-templates.com/template-terms
           <input id="Title" class="btmspace-15" type="text" value="" placeholder="Title">
           <input id="Phone" class="btmspace-15" type="text" value="" placeholder="Phone">
           <input id="password" class="btmspace-15" type="text" value="" placeholder="password">
-          <input id="StartDate" class="btmspace-15" type="text" value="2017-07-28 08:00:00" placeholder="StartDate">
-          <input id="EndDate" class="btmspace-15" type="text" value="2017-08-10 08:00:00" placeholder="EndDate">
+          <input id="StartDate" class="btmspace-15" type="date" value="" placeholder="StartDate" >
+          <input id="EndDate" class="btmspace-15" type="date" value="" placeholder="EndDate">
           <input id="Place" class="btmspace-15" type="text" value="" placeholder="Place">
           <input id="Account" class="btmspace-15" type="text" value="" placeholder="Account">
           <input id="Bank" class="btmspace-15" type="text" value="" placeholder="Bank">
@@ -99,7 +104,7 @@ Licence URI: http://www.os-templates.com/template-terms
     <input class="btmspace-15" type="text" value="" placeholder="Game Title">
     <input class="btmspace-15" type="text" value="" placeholder="Max Grade">
     <input class="btmspace-15" type="text" value="" placeholder="Min Grade">
-    <input class="btmspace-15" type="text" value="" placeholder="Type (M, F, MF)">
+    <input class="btmspace-15" type="text" value="" placeholder="Type (M, F, MF)" data-toggle="dropdown">
     <input class="btmspace-15" type="text" value="" placeholder="rule_of_league">
     <!-- <input type="submit" value="delete Game" style="cursor:pointer" onclick="remove_item(this)"></input> -->
 </div>
@@ -108,7 +113,11 @@ Licence URI: http://www.os-templates.com/template-terms
 <!-- ################################################################################################ -->
 <a id="backtotop" href="#top"><i class="fa fa-chevron-up"></i></a>
 <!-- JAVASCRIPTS -->
+<script type="text/javascript">
+document.getElementById('StartDate').valueAsDate = new Date();
+document.getElementById('EndDate').valueAsDate = new Date();
 
+</script>
 <script src="layout/scripts/jquery.min.js"></script>
 <script src="layout/scripts/jquery.backtotop.js"></script>
 <script src="layout/scripts/jquery.mobilemenu.js"></script>

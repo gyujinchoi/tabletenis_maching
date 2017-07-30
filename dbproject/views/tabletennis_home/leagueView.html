@@ -13,6 +13,189 @@ Licence URI: http://www.os-templates.com/template-terms
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link href="layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
+<script type="text/javascript">
+window.onload = function(){
+  var xhttp = new XMLHttpRequest();
+  var url = "http://52.79.188.98:3000/competition/get";
+  xhttp.open("get", url, false);
+  xhttp.setRequestHeader("Content-type", "application/json");
+  xhttp.send();
+    
+    if (xhttp.readyState === 4) {
+        if (xhttp.status === 200) {
+          var jsonResponse = JSON.parse(xhttp.responseText); 
+          //alert(xhttp.responseText);
+          //정상 여부 확인 필요 할듯
+
+          var select = document.getElementById('competition');
+          for (var i = 0; i< jsonResponse.length; i++){
+              var opt = document.createElement('option');
+              opt.value = jsonResponse[i].competition_id;
+              opt.text = jsonResponse[i].title;
+              // opt.innerHTML = i;
+              select.appendChild(opt);
+              
+          }
+          select.selectedIndex = 0;
+          loadGame();
+        } else {
+          alert("저장에 실패 했습니다.");
+        }
+      }
+    
+    //클럽 정보 조회
+    url = "http://52.79.188.98:3000/player/group";
+    xhttp.open("get", url, false);
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send();
+
+    if (xhttp.readyState === 4) {
+        if (xhttp.status === 200) {
+          var jsonResponse = JSON.parse(xhttp.responseText); 
+          //alert(xhttp.responseText);
+          //정상 여부 확인 필요 할듯
+
+          var club = document.getElementById('Club');
+          for (var i = 0; i< jsonResponse.length; i++){
+              var opt = document.createElement('option');
+              opt.value = jsonResponse[i].name;
+              // opt.text = jsonResponse[i].group_id;
+              // opt.innerHTML = i;
+              club.appendChild(opt);
+              
+          }
+        } else {
+          alert("저장에 실패 했습니다.");
+        }
+      }
+        //event 정보 조호
+  url = "http://52.79.188.98:3000/game/autogen_tmp?event_id=6";
+  xhttp.open("get", url, false);
+  xhttp.setRequestHeader("Content-type", "application/json");
+  xhttp.send();
+
+  if (xhttp.readyState === 4) {
+          if (xhttp.status === 200) {
+            var jsonResponse = JSON.parse(xhttp.responseText); 
+            //alert(xhttp.responseText);
+            //정상 여부 확인 필요 할듯
+
+            // var table = document.createElement("TABLE");
+            // table.setAttribute("id", "myTable");
+            // document.getElementById("leagueTable").appendChild(table);
+
+            // var thead = document.createElement("thead");
+            // thead.setAttribute("id", "myThead");
+            // document.getElementById("myTable").appendChild(thead);
+
+            // var Headtr = document.createElement("tr");
+            // Headtr.setAttribute("id", "myHTr");
+            // document.getElementById("myThead").appendChild(Headtr);
+
+            // var Htd1 = document.createElement("th");
+            // var HText = document.createTextNode("sampleHead");
+            // Htd1.appendChild(HText);
+            // document.getElementById("myHTr").appendChild(Htd1);
+
+            // var Htd2 = document.createElement("th");
+            // var HText = document.createTextNode("sampleHead");
+            // Htd2.appendChild(HText);
+            // document.getElementById("myHTr").appendChild(Htd2);
+
+            // var tbody = document.createElement("tbody");
+            // tbody.setAttribute("id", "myTbody");
+            // document.getElementById("myTable").appendChild(tbody);
+
+            // var bodyTR = document.createElement("tr");
+            // bodyTR.setAttribute("id", "myTr");
+            // document.getElementById("myTbody").appendChild(bodyTR);
+
+            // var bodyTR2 = document.createElement("tr");
+            // bodyTR2.setAttribute("id", "myTr2");
+            // document.getElementById("myTbody").appendChild(bodyTR2);
+
+            // var bodyTD = document.createElement("td");
+            // // z.value = "cell";
+            // var t = document.createTextNode("cell");
+            // bodyTD.appendChild(t);
+            // document.getElementById("myTr").appendChild(bodyTD);
+
+            // var bodyTD2 = document.createElement("td");
+            // var z = document.createTextNode("cell2");
+            // bodyTD2.appendChild(z);
+            // document.getElementById("myTr2").appendChild(bodyTD2);
+            
+          } else {
+            alert("저장에 실패 했습니다.");
+          }
+        }
+}
+
+function loadGame() {
+    var xhttp = new XMLHttpRequest();
+    var url = "http://52.79.188.98:3000/competition/event/get";
+    var selectCompetion = document.getElementById('competition');
+    url += "?competition_id=" + selectCompetion.options[selectCompetion.selectedIndex].value;
+    xhttp.open("get", url, false);
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send();
+    
+    if (xhttp.readyState === 4) {
+        if (xhttp.status === 200) {
+          var jsonResponse = JSON.parse(xhttp.responseText); 
+            //alert(xhttp.responseText);
+            //정상 여부 확인 필요 할듯
+
+            var select = document.getElementById('game');
+            select.innerHTML = "";
+            for (var i = 0; i<jsonResponse.length; i++){
+                var opt = document.createElement('option');
+                opt.value = jsonResponse[i].event_id;
+                opt.text = jsonResponse[i].title;
+                // opt.innerHTML = i;
+                select.appendChild(opt);
+            }
+          //정상 여부 확인 필요 할듯
+        } else {
+          alert(xhttp.responseText);
+        }
+      }
+    
+  }
+</script>
+
+ <style type="text/css">
+.select-style {
+    padding: 0;
+    margin: 2px;
+    margin-bottom:15px;
+    border: 1px solid #9D8D65;
+    width: 120px;
+    border-radius: 3px;
+    overflow: hidden;
+    background-color: black;
+
+    background: black no-repeat 90% 50%;
+}
+
+.select-style select {
+    padding: 1px 4px;
+    width: 130%;
+    border: none;
+    box-shadow: none;
+    background-color: black;
+    background-image: none;
+    color: #FFFFFF;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+}
+
+.select-style select:focus {
+    outline: none;
+  border-color:#9D8D65;
+}
+  </style>
 </head>
 <body id="top">
 <!-- ################################################################################################ -->
@@ -55,12 +238,16 @@ Licence URI: http://www.os-templates.com/template-terms
   <div class="wrapper row1">
   <footer id="footer" class="hoc clear"> 
     <!-- ################################################################################################ -->
-    
-      <h6 class="heading">league Name</h6>
+      <div class="select-style" style="float: left; width: 33%;"">
+      <select class="btmspace-15" id="competition" onchange="loadGame()"></select>
+      </div>
+      <div class="select-style" style="float: left; width: 33%;">
+      <select class="btmspace-15" id="game"></select>
+      </div>
       
       <form method="post" action="#">
-      <div class="scrollable">
-        <table>
+      <div id="leagueTable" class="scrollable">
+        <table id="leagueTable">
           <thead>
             <tr>
               <th>Header 1</th>
@@ -95,6 +282,20 @@ Licence URI: http://www.os-templates.com/template-terms
               <td>Value 16</td>
             </tr>
           </tbody>
+          <thead>
+            <tr>
+              <th>Header 1</th>
+              <th>Header 2</th>
+              <th>Header 3</th>
+              <th>Header 4</th>
+            </tr>
+            <tbody>
+            <tr>
+              <td><a href="#">Value 1</a></td>
+              
+            </tr>
+            </tbody>
+          </thead>
         </table>
       </div>
       </form>
