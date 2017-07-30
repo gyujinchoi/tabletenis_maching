@@ -2,6 +2,24 @@ var express = require('express');
 var router = express.Router();
 var competition_model=require('../models/competition_model');
 
+var competition = {
+    title : "",
+    start_date: "",
+    end_date: "",
+    phone: "",
+    location: "",
+    account: 0,
+    bank: ""
+};
+
+var event = {
+    competition_id: 0,
+    title: "",
+    max_grade: 0,
+    min_grade: 9,
+    type: "",
+    rule_of_league: 0
+};
 //GET
 
 router.get('/',function(req,res,next){
@@ -45,16 +63,6 @@ router.get('/id?',function(req,res,next){
 	}
  });
 
-var competition = {
-	title : "",
-	start_date: "",
-	end_date: "",
-	phone: "",
-	location: "",
-	account: 0,
-	bank: ""
-};
-
 router.get('/add?',function(req,res,next){
     if(req.query.title && req.query.start_date &&  req.query.end_date
 		&& req.query.phone && req.query.location && req.query.account && req.query.bank){
@@ -68,18 +76,23 @@ router.get('/add?',function(req,res,next){
 
         competition_model.addCompetition(competition,function(err,rows){
             if(err){
-                res.json(err);
-            } else{
+                res.status(401);
+                res.json(err)
+            }else{
                 competition_model.getCompetition(competition, function(err, rows){
-                    if(err)
-                        res.json(err);
+                    if(err){
+                        res.status(401);
+                        res.json(err)
+                    }
                     else
                         res.json(rows);
                 });
             }
         });
-    } else
+    } else {
+        res.status(401);
         res.json("error : All informations must be needed to register competition!");
+    }
 });
 
 router.get('/get?',function(req,res,next){
@@ -89,28 +102,23 @@ router.get('/get?',function(req,res,next){
         competition.phone = req.query.phone;
 
         competition_model.getCompetition(competition, function(err, rows){
-            if(err)
-                res.json(err);
+            if(err){
+                res.status(401);
+                res.json(err)
+            }
             else
                 res.json(rows);
         });
     }else
         competition_model.getAllCompetitions(function(err,rows){
-            if(err)
-                res.json(err);
+            if(err){
+                res.status(401);
+                res.json(err)
+            }
             else
                 res.json(rows);
         });
 });
-
-var event = {
-	competition_id: 0,
-    title: "",
-    max_grade: 0,
-    min_grade: 9,
-    type: "",
-    rule_of_league: 0
-};
 
 router.get('/event/add?',function(req,res,next){
     if(req.query.competition_id && req.query.title &&  req.query.max_grade
@@ -125,12 +133,14 @@ router.get('/event/add?',function(req,res,next){
 
         competition_model.addEvent(event,function(err,rows){
             if(err){
-                res.json(err);
+                res.status(401);
+                res.json(err)
             } else{
                 competition_model.getEvent(event, function(err, rows){
-                    if(err)
-                        res.json(err);
-                    else
+                    if(err){
+                        res.status(401);
+                        res.json(err)
+                    }else
                         res.json(rows);
                 });
             }
@@ -147,40 +157,45 @@ router.get('/event/get?',function(req,res,next) {
             event.type = req.query.type;
 
             competition_model.getEvent(event, function (err, rows) {
-                if (err)
-                    res.json(err);
-                else
+                if (err){
+                    res.status(401);
+                    res.json(err)
+                }else
                     res.json(rows);
             });
         } else {
             competition_model.getEventbyCompetitionId(event, function (err, rows) {
-                if (err)
-                    res.json(err);
-                else
+                if (err){
+                    res.status(401);
+                    res.json(err)
+                }else
                     res.json(rows);
             });
         }
     }else if(req.query.event_id) {
         competition_model.getEventbyId(req.query.event_id, function (err, rows) {
-            if (err)
-                res.json(err);
-            else
+            if (err){
+                res.status(401);
+                res.json(err)
+            }else
                 res.json(rows);
         });
 	}else
         competition_model.getAllEvents(function(err,rows){
-            if(err)
-                res.json(err);
-            else
+            if(err){
+                res.status(401);
+                res.json(err)
+            }else
                 res.json(rows);
         });
 });
 
 router.get('/event',function(req,res,next) {
     competition_model.getAllEvents(function(err,rows){
-        if(err)
-            res.json(err);
-        else
+        if(err){
+            res.status(401);
+            res.json(err)
+        }else
             res.json(rows);
     });
 });
@@ -189,10 +204,9 @@ router.get('/event',function(req,res,next) {
 router.post('/',function(req,res,next){
 	competition_model.addCompetition(req.body,function(err,count){
 	  if(err){
-		  res.json(err);
-	  }else{
-		  res.json(req.body);//or return count for 1 &amp;amp;amp; 0
-	  }
+          res.status(401);
+          res.json(err)
+      }else res.json(req.body);//or return count for 1 &amp;amp;amp; 0
 	});
  });
 
@@ -200,10 +214,9 @@ router.post('/',function(req,res,next){
 router.delete('/id',function(req,res,next){
 	competition_model.deleteCompetition(req.params.id,function(err,count){
 	 	if(err){
-		  res.json(err);
-	 	}else{
-		  res.json(count);
-		}
+            res.status(401);
+            res.json(err)
+        }else res.json(count);
 	});
 });
 
@@ -211,10 +224,9 @@ router.delete('/id',function(req,res,next){
 router.put('/id',function(req,res,next){
 	competition_model.updateCompetition(req.params.id,req.body,function(err,rows){
 		if(err){
-		  res.json(err);
-		}else{
-		  res.json(rows);
-		}
+		    res.status(401);
+            res.json(err)
+        }else res.json(rows);
 	});
  });
 
