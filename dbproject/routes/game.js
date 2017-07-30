@@ -38,11 +38,11 @@ var game_obj = {
     parent_b: 0
 };
 
-function generateMatches(players, max_grade, min_grade, num_of_game_players) {
+function generateMatches(players, event_id, round, max_grade, min_grade, num_of_game_players) {
     //num_of_players : 조별 인원
 
     var total_players = players[0].length;
-    var num_of_game = total_players / num_of_game_players;
+    var num_of_game = parseInt(total_players / num_of_game_players);
     var mod_of_players = total_players % num_of_game_players;
     var num_of_matches = num_of_game_players * (num_of_game_players - 1) / 2;
 
@@ -58,17 +58,20 @@ function generateMatches(players, max_grade, min_grade, num_of_game_players) {
     for (index = 0; index < players[0].length; index++) {
         players_per_group[players[0][index][0].grade].push(players[0][index][0]);
     }
-
+/*
     console.log(total_players);
     console.log(num_of_game);
     console.log(mod_of_players);
     console.log(min_grade);
     console.log(max_grade);
-
+*/
     for (index = 0; index < num_of_game; ++index) {
         var game_data = {
+            event_id: event_id,
             order: index,
-            round: 0,
+            round: round,
+            parent_game_id_1: 0,
+            parent_game_id_2: 0,
             matches: new Array(),
             players: new Array()
         };
@@ -88,6 +91,13 @@ function generateMatches(players, max_grade, min_grade, num_of_game_players) {
         }
     }
 
+    for (index = 0; index < num_of_game; ++index) {
+        for(var player_a_idx = 0; player_a_idx < games[index].players.length; ++player_a_idx) {
+            for (var player_b_idx = player_a_idx+1; player_b_idx < games[index].players.length; ++player_b_idx)
+                games[index].matches.push([games[index].players[player_a_idx], games[index].players[player_b_idx]]);
+        }
+    }
+
     return games;
     //조별 인원 구성완료.
     //console.log(games);
@@ -95,14 +105,11 @@ function generateMatches(players, max_grade, min_grade, num_of_game_players) {
 }
 
 function getPlayerForMatches(event_id, parti_data, callback_for_done) {
-
-    var num_of_matches = parti_data.event.rule_of_league;
-    var num_of_participants = parti_data.participants.length;
-    game_obj.round = 0;
     var players = new Array();
     var index = 0;
     var callfunctions = new Array();
     var idx = 0;
+    game_obj.round = 0;
     for (var index = 0; index < parti_data.participants.length; index++) {
         callfunctions[index] = function(callback){
             player_model.getPlayerById( parti_data.participants[idx++].player_id, function (err, player) {
@@ -160,7 +167,8 @@ router.get('/autogen?', function(req, res, next){
                 var games;
                 parti_data.players = players;
                 //console.log(parti_data.event.rule_of_league);
-                games = generateMatches(players, parti_data.event.max_grade, parti_data.event.min_grade, parti_data.event.rule_of_league);
+                //round 0
+                games = generateMatches(players, parti_data.event.event_id, 0, parti_data.event.max_grade, parti_data.event.min_grade, 8);//parti_data.event.rule_of_league);
                 res.json(games);
             });
     }else
