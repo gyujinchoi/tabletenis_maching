@@ -35,32 +35,10 @@ Licence URI: http://www.os-templates.com/template-terms
       <!-- ################################################################################################ -->
       <ul class="clear">
         <li><a href="index.html">Home</a></li>
-        <li class="active"><a class="drop" href="#">Pages</a>
-          <ul>
-            <li><a href="gallery.html">Gallery</a></li>
-            <li class="active"><a href="full-width.html">Full Width</a></li>
-            <li><a href="sidebar-left.html">Sidebar Left</a></li>
-            <li><a href="sidebar-right.html">Sidebar Right</a></li>
-            <li><a href="basic-grid.html">Basic Grid</a></li>
-          </ul>
-        </li>
-        <li><a class="drop" href="#">Dropdown</a>
-          <ul>
-            <li><a href="#">Level 2</a></li>
-            <li><a class="drop" href="#">Level 2 + Drop</a>
-              <ul>
-                <li><a href="#">Level 3</a></li>
-                <li><a href="#">Level 3</a></li>
-                <li><a href="#">Level 3</a></li>
-              </ul>
-            </li>
-            <li><a href="#">Level 2</a></li>
-          </ul>
-        </li>
-        <li><a href="#">Link Text</a></li>
-        <li><a href="#">Link Text</a></li>
-        <li><a href="#">Link Text</a></li>
-        <li><a href="#">Long Link Text</a></li>
+        <li><a href="makeleague.html">MAKE LEAGUE</a></li>
+        <li class="active"><a href="#">MAKE GAME</a></li>
+        <li><a href="joinleague.html">JOIN LEAGUE</a></li>
+        <li><a href="leagueView.html">GAME TABLE</a></li>
       </ul>
       <!-- ################################################################################################ -->
     </nav>
@@ -73,29 +51,30 @@ Licence URI: http://www.os-templates.com/template-terms
     <!-- ################################################################################################ -->
     
       <h6 class="heading">make Game events</h6>
-       <button type="submit" value="submit" onclick="add_item()">Add Game</button>
-          <div id="field"></div>
-      
+       
+       
+       <div style="float: left; width: 15%;">
+          <button type="submit" value="submit" onclick="add_item()">Add Game</button>
+          </div>
+          <div style="float: left; width: 15%;">
+          <button type="submit" value="submit" >Game등록하기</button>
+          </div> 
+          
+
       <form method="post" action="#">
         <fieldset>
           <legend>Newsletter:</legend>
-         
-          <!-- <input class="btmspace-15" type="text" value="" placeholder="Title">
-          <input class="btmspace-15" type="text" value="" placeholder="StartDate">
-          <input class="btmspace-15" type="text" value="" placeholder="EndDate">
-          <input class="btmspace-15" type="text" value="" placeholder="Place">
-          <input class="btmspace-15" type="text" value="" placeholder="Phone">-->
-          <div style="float: left; width: 15%;">
-          <button type="submit" value="submit">Previous</button>
-          </div>
-          <div style="float: left; width: 15%;">
-          <button type="submit" value="submit">Next</button>
-          </div> 
+         <div id="field"></div>
+          <input class="btmspace-15" type="text" value="" placeholder="Title">
+          <input class="btmspace-15" type="text" value="" placeholder="Max Grade">
+          <input class="btmspace-15" type="text" value="" placeholder="Min Grade">
+          <input class="btmspace-15" type="text" value="" placeholder="Type (M, F, MF)">
+          <input class="btmspace-15" type="text" value="" placeholder="rule_of_league">
 
           </fieldset>
 
       </form>
-    
+
     <!-- ################################################################################################ -->
   </footer>
 </div></div>
@@ -125,10 +104,10 @@ Licence URI: http://www.os-templates.com/template-terms
 </script>
 <div id="pre_set" style="display:none">
     <input class="btmspace-15" type="text" value="" placeholder="Title">
-          <input class="btmspace-15" type="text" value="" placeholder="Max Grade">
-          <input class="btmspace-15" type="text" value="" placeholder="Min Grade">
-          <input class="btmspace-15" type="text" value="" placeholder="Type (M, F, MF)">
-          <input class="btmspace-15" type="text" value="" placeholder="rule_of_league">
+    <input class="btmspace-15" type="text" value="" placeholder="Max Grade">
+    <input class="btmspace-15" type="text" value="" placeholder="Min Grade">
+    <input class="btmspace-15" type="text" value="" placeholder="Type (M, F, MF)">
+    <input class="btmspace-15" type="text" value="" placeholder="rule_of_league">
 </div>
 </body>
 </html>
