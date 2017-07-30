@@ -68,10 +68,12 @@ router.get('/add?',function(req,res,next){
 
         competition_model.addCompetition(competition,function(err,rows){
             if(err){
+                res.status(401);
                 res.json(err);
             } else{
                 competition_model.getCompetition(competition, function(err, rows){
                     if(err)
+                        res.status(401);
                         res.json(err);
                     else
                         res.json(rows);
@@ -79,6 +81,7 @@ router.get('/add?',function(req,res,next){
             }
         });
     } else
+        res.status(401);
         res.json("error : All informations must be needed to register competition!");
 });
 
