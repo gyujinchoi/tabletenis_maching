@@ -17,18 +17,18 @@ player_model = {
     },
 
     //ID로 조회
-    getPlayerById: function (player, callback) {
-        return db.query("SELECT * FROM player WHERE player_id=?", [player.id], callback);
+    getPlayerById: function (player_id, callback) {
+        return db.query("SELECT * FROM player WHERE player_id=?", player_id, callback);
     },
 
     //name으로 조회
-    getPlayerByName: function (player, callback) {
-        return db.query("SELECT * FROM player WHERE name=?", [player.name], callback);
+    getPlayerByName: function (player_name, callback) {
+        return db.query("SELECT * FROM player WHERE name=?", player_name, callback);
     },
 
     //phone number로 조회
-    getPlayerByPhone: function (player, callback) {
-        return db.query("SELECT * FROM player WHERE phone=?", [player.phone], callback);
+    getPlayerByPhone: function (player_phone, callback) {
+        return db.query("SELECT * FROM player WHERE phone=?", player_phone, callback);
     },
 
     //name and phone number로 조회
@@ -78,7 +78,7 @@ player_model = {
             callback);
     },
 
-    getParticipant: function (player_id, event_id, callback) {
+    getParticipants: function (player_id, event_id, callback) {
         var query_string = "select * from participant where ";
         var query_values = new Array();
         var i = 0;
@@ -94,7 +94,7 @@ player_model = {
             query_string += "player_id=" + player_id;
             query_values[i++] = player_id;
         }
-        console.log(query_string);
+        //console.log(query_string);
         return db.query(query_string, query_values, callback);
     },
 

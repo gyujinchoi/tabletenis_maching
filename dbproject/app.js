@@ -10,7 +10,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var competition = require('./routes/competition');
 var player = require('./routes/player');
-
+var game = require('./routes/game');
 
 var app = express();
 
@@ -33,6 +33,7 @@ app.use('/users', users);
 app.use('/users/apply', users);
 app.use('/competition', competition);
 app.use('/player', player)
+app.use('/game', game)
 
 console.log("Start Server");
 // catch 404 and forward to error handler
