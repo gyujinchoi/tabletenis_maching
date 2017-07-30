@@ -63,7 +63,7 @@ player_model = {
     },
 
     //대회 참가
-    applyCompetition: function (player_id, group_id, event_id, callback) {
+    applyCompetition: function (player_id, partner_id, group_id, event_id, callback) {
         /*
             Table: participant
             Columns:
@@ -72,9 +72,9 @@ player_model = {
             player_id	int(11)
             event_id	int(11)
         */
-        return db.query("insert into participant (player_id, group_id, event_id) select ?,?,? from dual" +
+        return db.query("insert into participant (player_id, partner_id, group_id, event_id) select ?,?,? from dual" +
             " where not exists (select * from participant where (player_id=? and event_id=?))",
-            [player_id, group_id, event_id, player_id, event_id],
+            [player_id, partner_id, group_id, event_id, player_id, event_id],
             callback);
     },
 
@@ -96,6 +96,14 @@ player_model = {
         }
         //console.log(query_string);
         return db.query(query_string, query_values, callback);
+    },
+
+    getPlayersOfEvent(event_id, callback) {
+        var query_string = "select distinct player.*, participant.participant_id, participant.group_id, participant.event_id "
+        query_string += "from player, participant where participant.event_id = " + event_id;
+        query_string += " and player.player_id = participant.player_id";
+        //console.log(query_string);
+        return db.query(query_string, callback);
     },
 
     getAllParticipants: function (callback) {

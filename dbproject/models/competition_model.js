@@ -87,6 +87,54 @@ var competition_model={
         return db.query("select * from event", callback);
     },
 
+    addGames:function(games, callback){
+        /*
+            Table: event
+            Columns:
+            event_id	int(11) AI PK
+            competition_id	int(11)
+            max_grade	int(1)
+            min_grade	int(1)
+            title	varchar(45)
+            type	set('M','F','MM','FF','MF')
+            rule_of_league	int(11)
+         */
+        var values = [];
+
+        for(var index = 0; index < games.length; index++) {
+            values[index] = [games[index].order, games[index].round, games[index].event_id];
+        }
+        return db.query("insert into tabletennis_competitions.game (game_order, game_round, event) values ?",
+            [values],
+            callback);
+    },
+
+    getGames:function(event_id, round, callback){
+        return db.query("select distinct * from tabletennis_competitions.game where game_round=? and event=?",
+            [round, event_id],
+            callback);
+    },
+
+    addMatches:function(matches, callback){
+        var values = [];
+        var query_string = "insert into tabletennis_competitions.match (match_order, game_id, parti_id) values ?";
+        for(var index = 0; index < matches.length; index++) {
+            values[index] = [matches[index].match_order, matches[index].game_id, matches[index].participant_id];
+        }
+        return db.query(query_string,
+            [values],
+            callback);
+    },
+
+    getMatches:function(game_id, callback){
+        var values = [];
+        var query_string = "select * from tabletennis_competitions.match where game_id=?";
+        return db.query(query_string,
+            [game_id],
+            callback);
+    },
+
+
     //대회 삭제
     deleteCompetition:function(id,callback){
         return db.query("DELECT FROM competition where id=?",[competition.id],callback);
