@@ -35,15 +35,11 @@ var competition_model={
             account	bigint(45)
             bank	varchar(45)
          */
-        db.query("insert into competition (title, start_date, end_date, phone, location, account, bank)\n values (?,?,?,?,?,?,?);",
+        return db.query("insert into competition (title, start_date, end_date, phone, location, account, bank)\n values (?,?,?,?,?,?,?);",
                         [competition.title.replace(/"/g, ""), competition.start_date.replace(/"/g, ""),
                         competition.end_date.replace(/"/g, ""), competition.phone.replace(/"/g, ""),
                         competition.location.replace(/"/g, ""), competition.account.replace(/"/g, ""),
                         competition.bank.replace(/"/g, "")],
-                        callback);
-
-        return db.query("select * from competition where title=? and start_date=? and phone=?",
-                        [competition.title.replace(/"/g, ""), competition.start_date.replace(/"/g, ""), competition.phone.replace(/"/g, "")],
                         callback);
     },
 
