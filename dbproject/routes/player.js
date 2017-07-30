@@ -7,7 +7,8 @@ var player = {
     name: "",
     phone: "",
     grade: 9,
-    gender : ''
+    gender: '',
+    passwd: "0000"
 };
 
 var group = {
@@ -30,6 +31,34 @@ router.get('/',function(req,res,next){
     getAllPlayers(res);
 });
 
+router.get('/add?',function(req,res,next){
+    if(req.query.name && req.query.phone && req.query.gender && req.query.grade){
+        player.name = req.query.name;
+        player.phone = req.query.phone;
+        player.grade = req.query.grade;
+        player.gender = req.query.gender;
+
+        if (req.query.passwd)
+            player.passwd = req.query.passwd;
+
+        player_model.addPlayer(player, function(err,rows){
+            if(err){
+                res.status(401);
+                res.json(err)
+            }else
+                player_model.getPlayerByNameAndPhone(player, function(err, rows){
+                    if(err){
+                        res.status(401);
+                        res.json(err)
+                    }else
+                        res.json(rows);
+                });
+        });
+    } else {
+        res.status(401);
+        res.json("error : name and phone must be needed!");
+    }
+});
 
 //GET
 router.get('/id?',function(req,res,next){

@@ -4,12 +4,12 @@ var player_model;
 player_model = {
     //player 등록...
     addPlayer: function (player, callback) {
-        var insert_player_query = "insert into player (name, phone, grade, gender)\n";
+        var insert_player_query = "insert into player (name, phone, grade, gender, passwd)\n";
         insert_player_query += " select ";
         insert_player_query += "'" + player.name + "', ";
         insert_player_query += "'" + player.phone + "', ";
         insert_player_query += player.grade + ", ";
-        insert_player_query += "'" + player.gender + "' from dual\n";
+        insert_player_query += "'" + player.gender + "', '" + player.passwd + "' from dual\n";
         insert_player_query += " where not exists (select * from player where ";
         insert_player_query += "(name='" + player.name + "' and phone='" + player.phone + "'))";
 
