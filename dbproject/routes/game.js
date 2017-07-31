@@ -130,7 +130,8 @@ function generateMatches(parti_data, round) {
                 competition_model.addGames(games, function (err, rows) {
                     if (err && err.errno != 1062) //1062 == ER_DUP_ENTRY: Duplicate entry for key
                         callback(err, rows);
-                    callback(0, rows);
+                    else
+                        callback(0, rows);
                 })
             },
             function(callback) {
@@ -210,6 +211,63 @@ router.get('/autogen_tmp?', function(req, res, next){
         };
         async.parallel([
                 function(callback) {
+                    //round 0의 games를 검사함...
+                    competition_model.getGames(req.query.event_id, 0, function(err, game_rows) {
+                        if (err) {
+                            res.status(401);
+                            res.json("error: cannot find games for event " + req.query.event_id);
+                        } else {
+                            if (game_rows.legnth == 0 || game_rows.legnth == undefined ) {
+                                competition_model.getEventbyId(req.query.event_id, function (err, event_rows) {
+                                    if (err) {
+                                        res.json(err);
+                                        res.json("error: cannot find event.");
+                                    } else {
+                                        parti_data.event = event_rows[0];
+                                        player_model.getPlayersOfEvent(req.query.event_id, function (err, parti_rows) {
+                                            if (err) {
+                                                res.status(401);
+                                                res.json(err)
+                                            } else {
+                                                parti_data.event_id = req.query.event_id;
+                                                callback(err, parti_rows);
+                                            }
+                                        });
+                                    }
+                                });
+                            }else{
+                                res.status(401);
+                                res.json("error: generated games are already existed.")
+                            }
+                        }
+                    });
+                }
+            ],
+            function(err, players) {
+                var games;
+                parti_data.players = players;
+                //round 0
+                games = generateMatches(parti_data, 0);
+                res.json(games);
+            });
+    }else {
+        res.status(401);
+        res.json("error: event id must be inputed.");
+    }
+
+});
+
+//예선 조를 자동으로 구성한다.
+router.get('/autogen?', function(req, res, next){
+    if(req.query.event_id) {
+        var event_id = -1;
+        var parti_data = {
+            event: new Object(),
+            participants: new Object(),
+            players: new Array()
+        };
+        async.parallel([
+                function(callback) {
                     competition_model.getEventbyId(req.query.event_id, function(err, event_rows) {
                         if (err){
                             res.json(err);
@@ -238,50 +296,96 @@ router.get('/autogen_tmp?', function(req, res, next){
             });
     }else
         res.json("error: event id must be inputed.")
-
 });
 
 //예선 조를 자동으로 구성한다.
-router.get('/autogen?', function(req, res, next){
+router.get('/getmatches?', function(req, res, next){
     if(req.query.event_id) {
-        var event_id = -1;
-        var parti_data = {
-            event: new Object(),
-            participants: new Object(),
-            players: new Array()
-        };
-        async.parallel([
-                function(callback) {
-                    competition_model.getEventbyId(req.query.event_id, function(err, event_rows) {
-                        if (err){
-                            res.json(err);
-                            res.json("error: cannot find event.");
-                        } else {
-                            player_model.getParticipants(-1, req.query.event_id, function (err, parti_rows) {
-                                if (err){
-                                    res.status(401);
-                                    res.json(err)
-                                }else {
-                                    parti_data.event_id = req.query.event_id;
-                                    parti_data.participants = parti_rows;
-                                    parti_data.event = event_rows[0];
+        var round = 0;
+        if (req.query.round)
+            round = req.query.round;
 
-                                    getPlayerForMatches(req.query.event_id, parti_data, callback);
-                                }
-                            });
+        player_model.getPlayersOfMatches(req.query.event_id, round, function(err, match_rows) {
+            if(err) {
+                res.status(401);
+                res.json(err);
+            }else {
+                //console.log(match_rows);
+                if (req.query.by_raw==1)
+                    res.json(match_rows);
+                else {
+                    var game_data_dict = new Object();
+                    for (var index = 0; index < match_rows.length; index++) {
+                        //game_id에 해당하는 game data가 없는 경우...
+                        var match_data = undefined;
+                        var game_data = undefined;
+
+                        if (game_data_dict[match_rows[index].game_id] == undefined
+                            || game_data_dict[match_rows[index].game_id] == null) {
+                            var new_game_data = {
+                                event_id: req.query.event_id,
+                                game_id: match_rows[index].game_id,
+                                order: match_rows[index].game_order,
+                                round: match_rows[index].game_round,
+                                parent_a: match_rows[index].parent_a,
+                                parent_b: match_rows[index].parent_b,
+                                matches: new Array(),
+                                players: new Array()
+                            };
+                            game_data_dict[match_rows[index].game_id] = new_game_data;
                         }
-                    });
+
+                        game_data = game_data_dict[match_rows[index].game_id];
+
+                        for (var tmp_idx = 0; tmp_idx < game_data.matches.length; ++tmp_idx) {
+                            if (game_data.matches[tmp_idx].order == match_rows[index].match_order) {
+                                match_data = game_data.matches[tmp_idx];
+                                break;
+                            }
+                        }
+
+                        if (match_data == undefined) {
+                            match_data = {
+                                order: match_rows[index].match_order,
+                                teams: new Array()
+                            };
+                            game_data.matches.push(match_data);
+                        }
+
+                        var player = {
+                            participant_id: match_rows[index].participant_id,
+                            group_id: match_rows[index].group_id,
+                            player_id: -1,
+                            partner_id: match_rows[index].partner_id == null ? 0 : match_rows[index].partner_id,
+                            name: match_rows[index].name,
+                            phone: match_rows[index].phone,
+                            grade: match_rows[index].grade,
+                            gender: match_rows[index].gender
+                        };
+
+                        match_data.teams.push(player);
+
+                        for (var tmp_idx = 0; tmp_idx < game_data.players.length; ++tmp_idx) {
+                            if (game_data.players[tmp_idx].player_id == match_rows[index].player_id) {
+                                player.player_id = match_rows[index].player_id;
+                                break;
+                            }
+                        }
+
+                        if (player.player_id == -1) {
+                            player.player_id = match_rows[index].player_id;
+                            game_data.players.push(player);
+                        }
+
+                    }
+                    res.json(game_data_dict);
                 }
-            ],
-            function(err, players) {
-                var games;
-                parti_data.players = players;
-                //round 0
-                games = generateMatches(players, parti_data.event.event_id, 0, parti_data.event.max_grade, parti_data.event.min_grade, 8);//parti_data.event.rule_of_league);
-                res.json(games);
-            });
-    }else
-        res.json("error: event id must be inputed.")
+            }
+        });
+    }else {
+        res.status(401);
+        res.json("error: event id must be inputed.");
+    }
 
 });
 

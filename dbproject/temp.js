@@ -115,3 +115,13 @@ insert into tabletennis_competitions.participant (group_id, player_id, event_id)
 insert into tabletennis_competitions.participant (group_id, player_id, event_id) values (1,	58	,6);
 insert into tabletennis_competitions.participant (group_id, player_id, event_id) values (1,	59	,6);
 insert into tabletennis_competitions.participant (group_id, player_id, event_id) values (1,	60	,6);
+
+//모든 event에 대한 match 정보 table 생성....
+SELECT distinct tabletennis_competitions.`game`.*,
+    match_t.match_id, match_t.match_order,
+    participant.participant_id, participant.partner_id, participant.group_id,
+    player.player_id, player.name, player.phone, player.grade, player.gender
+FROM game, tabletennis_competitions.`match` as match_t, participant, player, event
+where game.event=event.event_id and game.game_round=0 and game.game_id=match_t.game_id and participant.participant_id=match_t.parti_id
+and player.player_id=participant.player_id
+order by game.game_order, match_t.match_order;

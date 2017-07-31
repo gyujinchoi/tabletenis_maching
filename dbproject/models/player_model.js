@@ -106,6 +106,19 @@ player_model = {
         return db.query(query_string, callback);
     },
 
+    //round별 시합(match, game, participant, player) 정보를 모두 join한 결과를 반환함.
+    getPlayersOfMatches(event_id, round, callback) {
+        return db.query("SELECT distinct tabletennis_competitions.`game`.*,\n" +
+                        " match_t.match_id, match_t.match_order,\n" +
+                        " participant.participant_id, participant.partner_id, participant.group_id,\n" +
+                        " player.player_id, player.name, player.phone, player.grade, player.gender\n" +
+                        " FROM game, tabletennis_competitions.`match` as match_t, participant, player\n" +
+                        " where game.event=? and game.game_round=? and game.game_id=match_t.game_id and participant.participant_id=match_t.parti_id\n" +
+                        " and player.player_id=participant.player_id\n" +
+                        " order by game.game_order, match_t.match_order;",
+                        [event_id, round], callback)
+    },
+
     getAllParticipants: function (callback) {
         return db.query("select * from participant",
             callback);
