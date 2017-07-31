@@ -89,9 +89,14 @@ player_model = {
             player_id	int(11)
             event_id	int(11)
         */
-        return db.query("insert into participant (player_id, partner_id, group_id, event_id) select ?,?,? from dual" +
-            " where not exists (select * from participant where (player_id=? and event_id=?))",
-            [player_id[0], partner_id[0], group_id[0], event_id[0], player_id, event_id],
+        var values = [];
+        var unique_value = Math.floor(new Date().getTime() / 1000)+Math.floor(Math.random()*10000000);
+
+        values[0] = [player_id[0], unique_value, group_id[0], event_id];
+        values[1] = [player_id[1], unique_value, group_id[1], event_id];
+
+        return db.query("insert into participant (player_id, partner_id, group_id, event_id) values ?",
+            [values],
             callback);
     },
 
@@ -115,10 +120,25 @@ player_model = {
         return db.query(query_string, query_values, callback);
     },
 
+    getDoubleParticipants: function (player_id_1, player_id_2, event_id, callback) {
+        var query_string = "select * from participant where ";
+        var query_values = new Array();
+        var i = 0;
+
+        query_string += "event_id=" + event_id;
+        query_string += " and ";
+        query_string += "(player_id=" + player_id_1;
+        query_string += " or player_id=" + player_id_2;
+        query_string += ");"
+        //console.log(query_string);
+        return db.query(query_string, callback);
+    },
+
+
     getPlayersOfEvent(event_id, callback) {
-        var query_string = "select distinct player.*, participant.participant_id, participant.group_id, participant.event_id "
-        query_string += "from player, participant where participant.event_id = " + event_id;
-        query_string += " and player.player_id = participant.player_id";
+        var query_string = "select distinct player.*, parti.participant_id, parti.group_id, parti.event_id, parti.partner_id "
+        query_string += "from player, participant as parti where parti.event_id = " + event_id;
+        query_string += " and player.player_id = parti.player_id";
         //console.log(query_string);
         return db.query(query_string, callback);
     },

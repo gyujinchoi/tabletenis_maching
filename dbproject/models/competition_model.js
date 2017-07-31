@@ -115,8 +115,9 @@ var competition_model={
     },
 
     getGames:function(event_id, round, callback){
-        return db.query("select distinct * from tabletennis_competitions.game where game_round=? and event=?",
-            [round, event_id],
+        return db.query("select distinct game_t.*, event_t.type from tabletennis_competitions.game as game_t, tabletennis_competitions.event as event_t"
+            +" where game_t.game_round=? and game_t.event=? and event_t.event_id=?",
+            [round, event_id, event_id],
             callback);
     },
 

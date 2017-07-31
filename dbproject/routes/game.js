@@ -38,13 +38,42 @@ var game_obj = {
     parent_b: 0
 };
 
+function getDobulePlayers(players) {
+    var new_dobulePlayers = [];
+    var partner_ids = new Object();
+
+    for (var index = 0, inserted_idx = 0; index < players.length; ++index) {
+        //players[index].
+        var addedPlayer = 0;
+
+        if ("idx"+players[index].partner_id in partner_ids) {
+            tmp_players = new_dobulePlayers[partner_ids["idx"+players[index].partner_id.toString()]];
+
+            if (tmp_players[0].grade < players[index].grade)
+                tmp_players.push(players[index])
+            else
+                tmp_players.unshift(players[index]);
+            //new_dobulePlayers[partner_ids["idx"+players[index].partner_id.toString()]].push(players[index]);
+        } else {
+            new_dobulePlayers.push([players[index]]);
+            partner_ids["idx"+players[index].partner_id.toString()] = new_dobulePlayers.length-1;
+            //new_dobulePlayers.push([players[index]]);
+        }
+    }
+
+    return new_dobulePlayers;
+}
 
 function generateMatches(parti_data, round) {
     //num_of_players : 조별 인원
 
+    //for test
     var players = parti_data.players[0];
     var total_players = players.length;
     var num_of_game_players =  parti_data.event.rule_of_league;
+    var isdouble = parti_data.event.type.length;
+    var num_of_game_players =  parti_data.event.rule_of_league*isdouble;
+
     var max_grade =  parti_data.event.max_grade;
     var min_grade =  parti_data.event.min_grade;
     var num_of_game = parseInt(total_players / num_of_game_players);
@@ -61,9 +90,16 @@ function generateMatches(parti_data, round) {
     for (var index = 0; index < num_of_grades; index++)
         players_per_group[index] = new Array();
 
-    for (index = 0; index < players.length; index++) {
-        players_per_group[players[index].grade].push(players[index]);
+    if (isdouble == 2) {
+        players = getDobulePlayers(players);
+        for (index = 0; index < players.length; index++) {
+            players_per_group[players[index][0].grade].push(players[index]);
+        }
     }
+    else
+        for (index = 0; index < players.length; index++) {
+            players_per_group[players[index].grade].push(players[index]);
+        }
 
     for (index = 0; index < num_of_game; ++index) {
         var game_data = {
@@ -91,14 +127,17 @@ function generateMatches(parti_data, round) {
             });
             //group으로 정렬.
             players_per_group[grade_idx].sort(function (player_a, player_b) {
-                return player_a.group_id - player_b.group_id;
+                if (isdouble == 2)
+                    return player_a[0].group_id - player_b[0].group_id;
+                else
+                    return player_a.group_id - player_b.group_id;
             });
         }
         //console.log("re random", grade_idx,  order_used_random_deployment);
 
         while(players_per_group[grade_idx].length != 0) {
             var game_idx = order_used_random_deployment[index];
-            if (games[game_idx].players.length < num_of_game_players)
+            if (games[game_idx].players.length < num_of_game_players/isdouble) //double일 경우에 player수는 이차원 배열로...
                 games[game_idx].players.push(players_per_group[grade_idx].pop());
 
             if (++index == num_of_game) {
@@ -140,17 +179,41 @@ function generateMatches(parti_data, round) {
                     for(var row_index=0; row_index < rows.length; row_index++) {
                         var game_index = rows[row_index].game_order - 1;
                         for (var match_idx = 0; match_idx < games[game_index].matches.length; ++match_idx) {
-                            var match_data_for_game = [{
-                                game_id: rows[row_index].game_id,
-                                match_order: games[game_index].matches[match_idx].order,
-                                participant_id: games[game_index].matches[match_idx].team[0].participant_id
-                            },{
-                                game_id: rows[row_index].game_id,
-                                match_order: games[game_index].matches[match_idx].order,
-                                participant_id: games[game_index].matches[match_idx].team[1].participant_id
-                            }];
-                            match_data_for_games.push(match_data_for_game[0]);
-                            match_data_for_games.push(match_data_for_game[1]);
+                            if (isdouble == 2) {
+                                var match_data_for_game = [{
+                                    game_id: rows[row_index].game_id,
+                                    match_order: games[game_index].matches[match_idx].order,
+                                    participant_id: games[game_index].matches[match_idx].team[0][0].participant_id
+                                }, {
+                                    game_id: rows[row_index].game_id,
+                                    match_order: games[game_index].matches[match_idx].order,
+                                    participant_id: games[game_index].matches[match_idx].team[0][1].participant_id
+                                }, {
+                                    game_id: rows[row_index].game_id,
+                                    match_order: games[game_index].matches[match_idx].order,
+                                    participant_id: games[game_index].matches[match_idx].team[1][0].participant_id
+                                }, {
+                                    game_id: rows[row_index].game_id,
+                                    match_order: games[game_index].matches[match_idx].order,
+                                    participant_id: games[game_index].matches[match_idx].team[1][1].participant_id
+                                }];
+                                match_data_for_games.push(match_data_for_game[0]);
+                                match_data_for_games.push(match_data_for_game[1]);
+                                match_data_for_games.push(match_data_for_game[2]);
+                                match_data_for_games.push(match_data_for_game[3]);
+                            }else {
+                                var match_data_for_game = [{
+                                    game_id: rows[row_index].game_id,
+                                    match_order: games[game_index].matches[match_idx].order,
+                                    participant_id: games[game_index].matches[match_idx].team[0].participant_id
+                                }, {
+                                    game_id: rows[row_index].game_id,
+                                    match_order: games[game_index].matches[match_idx].order,
+                                    participant_id: games[game_index].matches[match_idx].team[1].participant_id
+                                }];
+                                match_data_for_games.push(match_data_for_game[0]);
+                                match_data_for_games.push(match_data_for_game[1]);
+                            }
                         }
                     }
 
@@ -206,6 +269,7 @@ function generateGamesAndMatches(req, res, next) {
         var event_id = -1;
         var parti_data = {
             event: new Object(),
+            games: new Object(),
             participants: new Object(),
             players: new Array()
         };
@@ -217,6 +281,7 @@ function generateGamesAndMatches(req, res, next) {
                             res.status(401);
                             res.json("error: cannot find games for event " + req.query.event_id);
                         } else {
+                            parti_data.games = game_rows;
                             if (game_rows.legnth == 0 || game_rows.legnth == undefined ) {
                                 competition_model.getEventbyId(req.query.event_id, function (err, event_rows) {
                                     if (err) {
@@ -245,9 +310,29 @@ function generateGamesAndMatches(req, res, next) {
             ],
             function(err, players) {
                 var games;
+
+                if (players[0].length < parti_data.games.length
+                || players[0].length < 1) {
+                    res.status(401);
+                    res.json("error: not enough game players.");
+                    return;
+                }
+
+                if (parti_data.event.rule_of_league < 2){
+                    res.status(401);
+                    res.json("error: not enough the number of players per game.");
+                    return;
+                }
+
                 parti_data.players = players;
                 //round 0
-                games = generateMatches(parti_data, 0);
+                if (parti_data.event.type.length <= 2 && parti_data.event.type.length > 0)
+                    games = generateMatches(parti_data, 0);
+                else {
+                    res.status(401);
+                    res.json("error: over the number of players for double game.");
+                    return;
+                }
                 res.json({status:0});
             });
     }else {

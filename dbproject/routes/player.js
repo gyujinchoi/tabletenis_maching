@@ -167,7 +167,29 @@ router.get('/applysingle?', function(req, res, next){
                     res.status(401);
                     res.json(err)
                 }else
-                    player_model.getParticipant(req.query.player_id,
+                    player_model.getParticipants(req.query.player_id,
+                        req.query.event_id, function(err, rows) {
+                            if(err){
+                                res.status(401);
+                                res.json(err)
+                            }else
+                                res.json(rows);
+                        });
+            });
+    }else
+        res.json("error : player_id and group_id, event_id are necessary!");
+});
+
+router.get('/applydouble?', function(req, res, next){
+    if(req.query.player_id_1 && req.query.player_id_2 && req.query.group_id_1 && req.query.group_id_2 && req.query.event_id) {
+        player_model.applyCompetitionForDouble([req.query.player_id_1, req.query.player_id_2], 0, /*단식 출전자는 partner_id가 0임.*/
+            [req.query.group_id_1, req.query.group_id_2], req.query.event_id, function(err, rows){
+                if(err){
+                    res.status(401);
+                    res.json(err)
+                }else
+                    player_model.getDoubleParticipants(req.query.player_id_1,
+                        req.query.player_id_2,
                         req.query.event_id, function(err, rows) {
                             if(err){
                                 res.status(401);
