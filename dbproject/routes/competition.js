@@ -66,7 +66,7 @@ router.get('/id?',function(req,res,next){
 
 router.get('/add?',function(req,res,next){
     if(req.query.title && req.query.start_date &&  req.query.end_date
-		&& req.query.phone && req.query.location && req.query.account && req.query.bank){
+		&& req.query.phone && req.query.location){
         competition.title = req.query.title;
         competition.start_date = req.query.start_date;
         competition.end_date = req.query.end_date;
