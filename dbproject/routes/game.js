@@ -200,8 +200,8 @@ function getPlayerForMatches(event_id, participants, callback_for_done) {
     });
 }
 
-//예선 조를 자동으로 구성한다.
-router.get('/autogen_tmp?', function(req, res, next){
+function generateGamesAndMatches(req, res, next) {
+
     if(req.query.event_id) {
         var event_id = -1;
         var parti_data = {
@@ -248,55 +248,21 @@ router.get('/autogen_tmp?', function(req, res, next){
                 parti_data.players = players;
                 //round 0
                 games = generateMatches(parti_data, 0);
-                res.json(games);
+                res.json({status:0});
             });
     }else {
         res.status(401);
         res.json("error: event id must be inputed.");
     }
 
-});
+}
 
 //예선 조를 자동으로 구성한다.
-router.get('/autogen?', function(req, res, next){
-    if(req.query.event_id) {
-        var event_id = -1;
-        var parti_data = {
-            event: new Object(),
-            participants: new Object(),
-            players: new Array()
-        };
-        async.parallel([
-                function(callback) {
-                    competition_model.getEventbyId(req.query.event_id, function(err, event_rows) {
-                        if (err){
-                            res.json(err);
-                            res.json("error: cannot find event.");
-                        } else {
-                            parti_data.event = event_rows[0];
-                            player_model.getPlayersOfEvent(req.query.event_id, function (err, parti_rows) {
-                                if (err){
-                                    res.status(401);
-                                    res.json(err)
-                                }else {
-                                    parti_data.event_id = req.query.event_id;
-                                    callback(err, parti_rows);
-                                }
-                            });
-                        }
-                    });
-                }
-            ],
-            function(err, players) {
-                var games;
-                parti_data.players = players;
-                //round 0
-                games = generateMatches(parti_data, 0);
-                res.json(games);
-            });
-    }else
-        res.json("error: event id must be inputed.")
-});
+router.get('/autogen_tmp?', generateGamesAndMatches);
+
+//예선 조를 자동으로 구성한다.
+
+router.get('/autogen?', generateGamesAndMatches);
 
 //예선 조를 자동으로 구성한다.
 router.get('/getmatches?', function(req, res, next){

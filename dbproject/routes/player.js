@@ -146,7 +146,7 @@ router.get('/apply?', function(req, res, next){
                     res.status(401);
                     res.json(err)
                 }else
-                    player_model.getParticipant(req.query.player_id,
+                    player_model.getParticipants(req.query.player_id,
                         req.query.event_id, function(err, rows) {
                             if(err){
                                 res.status(401);

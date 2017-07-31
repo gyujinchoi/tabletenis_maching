@@ -72,9 +72,26 @@ player_model = {
             player_id	int(11)
             event_id	int(11)
         */
-        return db.query("insert into participant (player_id, partner_id, group_id, event_id) select ?,?,? from dual" +
+
+        return db.query("insert into participant (player_id, partner_id, group_id, event_id) select ?,?,?,? from dual" +
             " where not exists (select * from participant where (player_id=? and event_id=?))",
             [player_id, partner_id, group_id, event_id, player_id, event_id],
+            callback);
+    },
+
+    //대회 참가
+    applyCompetitionForDouble: function (player_id, partner_id, group_id, event_id, callback) {
+        /*
+            Table: participant
+            Columns:
+            participant_id	int(11) AI PK
+            group_id	int(11)
+            player_id	int(11)
+            event_id	int(11)
+        */
+        return db.query("insert into participant (player_id, partner_id, group_id, event_id) select ?,?,? from dual" +
+            " where not exists (select * from participant where (player_id=? and event_id=?))",
+            [player_id[0], partner_id[0], group_id[0], event_id[0], player_id, event_id],
             callback);
     },
 
