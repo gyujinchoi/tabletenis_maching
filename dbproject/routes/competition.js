@@ -72,8 +72,6 @@ router.get('/add?',function(req,res,next){
         competition.end_date = req.query.end_date;
         competition.phone = req.query.phone;
         competition.location = req.query.location;
-        competition.account = req.query.account;
-        competition.bank = req.query.bank;
 
         if (req.query.passwd)
             competition.passwd = req.query.passwd;
