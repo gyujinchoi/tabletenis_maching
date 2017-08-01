@@ -166,6 +166,8 @@ function loadEvent() {
     for(var i = 0; i < count; i++) {
       var Htd = document.createElement("th");
       // Htd.width = "40px";
+      Htd.setAttribute("width", "400px");
+      Htd.setAttribute("align", "center");
       var HText = document.createTextNode(index+i+"조");
       Htd.appendChild(HText);
       document.getElementById("myHTr"+index).appendChild(Htd);
@@ -192,6 +194,7 @@ function loadEvent() {
           var bodyTD = document.createElement("td");
           var z = document.createTextNode(textlist[j]);
           bodyTD.appendChild(z);
+          bodyTD.setAttribute("align", "center");
           document.getElementById("myTr"+index+j).appendChild(bodyTD);
         }
       }
@@ -323,47 +326,10 @@ function loadEvent() {
       <select class="btmspace-15" id="game" onchange="updateGameInfo()" ></select>
       </div>
 
-      <div id="leagueTable" class="scrollable">
+      <div id="league" class="scrollable">
       <strong>1조</strong>
         <table id="leagueTable">
-          <thead>
-            <tr>
-              <th>1 Game</th>
-              <th>2 Game</th>
-              <th>3 Game</th>
-              <th>4 Game</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr id="firstGame">
-              <td><a href="#">Value 1</a></td>
-              <td>Value 2</td>
-              <td>Value 3</td>
-              <td>Value 4</td>
-            </tr>
-            <tr>
-              <td>Value 4</td>
-            </tr>
-          </tbody>
-        </table>
- <p>2조</p>
-        <table id="leagueTable2">
-          <thead>
-            <tr>
-              <th>1 Game</th>
-              <th>2 Game</th>
-              <th>3 Game</th>
-              <th>4 Game</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><a href="#">Value 1</a></td>
-              <td>Value 2</td>
-              <td>Value 3</td>
-              <td>Value 4</td>
-            </tr>
-          </tbody>
+          
         </table>
       </div>
       </form>
