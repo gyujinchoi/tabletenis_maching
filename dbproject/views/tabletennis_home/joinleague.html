@@ -322,6 +322,15 @@ var playerID ="";
       }
   }
 
+  function updateGameInfo()
+  {
+    if(eventlist[playerFrm.game.selectedIndex].type.length > 1)
+    {
+
+    }
+    
+  }
+
 
 
 </script>
@@ -408,7 +417,7 @@ var playerID ="";
       <select class="btmspace-15" id="competition" onchange="loadEvent()"></select>
       </div>
       <div class="select-style" style="float: right; width: 49%;">
-      <select class="btmspace-15" id="game"></select>
+      <select class="btmspace-15" id="game" onchange="updateGameInfo()"></select>
       </div>
 			<input id="clubinput" list="Club" class="btmspace-15" type="text" value="" placeholder="Name of Club" onchange="updateClubInfo(this)" >
       <datalist id="Club">

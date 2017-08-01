@@ -14,125 +14,51 @@ Licence URI: http://www.os-templates.com/template-terms
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link href="layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
 <script type="text/javascript">
-window.onload = function(){
+
+var league = [];
+var gamelist = [];
+
+  window.onload = function(){
+
+      //competition 조회
+      loadleague();
+      //Event 조회
+      loadGame();
+      //GameTable 조회
+      loadGameTable();
+  }
+
+
+
+function loadleague() {
   var xhttp = new XMLHttpRequest();
   var url = "http://52.79.188.98:3000/competition/get";
   xhttp.open("get", url, false);
   xhttp.setRequestHeader("Content-type", "application/json");
   xhttp.send();
     
-    if (xhttp.readyState === 4) {
-        if (xhttp.status === 200) {
-          var jsonResponse = JSON.parse(xhttp.responseText); 
-          //alert(xhttp.responseText);
-          //정상 여부 확인 필요 할듯
-
-          var select = document.getElementById('competition');
-          for (var i = 0; i< jsonResponse.length; i++){
-              var opt = document.createElement('option');
-              opt.value = jsonResponse[i].competition_id;
-              opt.text = jsonResponse[i].title;
-              // opt.innerHTML = i;
-              select.appendChild(opt);
-              
-          }
-          select.selectedIndex = 0;
-          loadGame();
-        } else {
-          alert("저장에 실패 했습니다.");
-        }
-      }
-    
-    // //클럽 정보 조회
-    // url = "http://52.79.188.98:3000/player/group";
-    // xhttp.open("get", url, false);
-    // xhttp.setRequestHeader("Content-type", "application/json");
-    // xhttp.send();
-
-    // if (xhttp.readyState === 4) {
-    //     if (xhttp.status === 200) {
-    //       var jsonResponse = JSON.parse(xhttp.responseText); 
-    //       //alert(xhttp.responseText);
-    //       //정상 여부 확인 필요 할듯
-
-    //       var club = document.getElementById('Club');
-    //       for (var i = 0; i< jsonResponse.length; i++){
-    //           var opt = document.createElement('option');
-    //           opt.value = jsonResponse[i].name;
-    //           // opt.text = jsonResponse[i].group_id;
-    //           // opt.innerHTML = i;
-    //           club.appendChild(opt);
-              
-    //       }
-    //     } else {
-    //       alert("저장에 실패 했습니다.");
-    //     }
-    //   }
-        //event 정보 조호
-  url = "http://52.79.188.98:3000/game/autogen_tmp?event_id=6";
-  xhttp.open("get", url, false);
-  xhttp.setRequestHeader("Content-type", "application/json");
-  xhttp.send();
-
   if (xhttp.readyState === 4) {
-          if (xhttp.status === 200) {
-            var jsonResponse = JSON.parse(xhttp.responseText); 
-            //alert(xhttp.responseText);
-            //정상 여부 확인 필요 할듯
+      if (xhttp.status === 200) {
+        var jsonResponse = JSON.parse(xhttp.responseText); 
+        //alert(xhttp.responseText);
+        //정상 여부 확인 필요 할듯
 
-            // var table = document.createElement("TABLE");
-            // table.setAttribute("id", "myTable");
-            // document.getElementById("leagueTable").appendChild(table);
-
-            // var thead = document.createElement("thead");
-            // thead.setAttribute("id", "myThead");
-            // document.getElementById("myTable").appendChild(thead);
-
-            // var Headtr = document.createElement("tr");
-            // Headtr.setAttribute("id", "myHTr");
-            // document.getElementById("myThead").appendChild(Headtr);
-
-            // var Htd1 = document.createElement("th");
-            // var HText = document.createTextNode("sampleHead");
-            // Htd1.appendChild(HText);
-            // document.getElementById("myHTr").appendChild(Htd1);
-
-            // var Htd2 = document.createElement("th");
-            // var HText = document.createTextNode("sampleHead");
-            // Htd2.appendChild(HText);
-            // document.getElementById("myHTr").appendChild(Htd2);
-
-            // var tbody = document.createElement("tbody");
-            // tbody.setAttribute("id", "myTbody");
-            // document.getElementById("myTable").appendChild(tbody);
-
-            // var bodyTR = document.createElement("tr");
-            // bodyTR.setAttribute("id", "myTr");
-            // document.getElementById("myTbody").appendChild(bodyTR);
-
-            // var bodyTR2 = document.createElement("tr");
-            // bodyTR2.setAttribute("id", "myTr2");
-            // document.getElementById("myTbody").appendChild(bodyTR2);
-
-            // var bodyTD = document.createElement("td");
-            // // z.value = "cell";
-            // var t = document.createTextNode("cell");
-            // bodyTD.appendChild(t);
-            // document.getElementById("myTr").appendChild(bodyTD);
-
-            // var bodyTD2 = document.createElement("td");
-            // var z = document.createTextNode("cell2");
-            // bodyTD2.appendChild(z);
-            // document.getElementById("myTr2").appendChild(bodyTD2);
+        var select = document.getElementById('competition');
+        for (var i = 0; i< jsonResponse.length; i++){
+            var opt = document.createElement('option');
+            opt.value = jsonResponse[i].competition_id;
+            opt.text = jsonResponse[i].title;
+            // opt.innerHTML = i;
+            select.appendChild(opt);
+            league.push(jsonResponse[i]);
             
-          } else {
-            alert("저장에 실패 했습니다.");
-          }
         }
-}
-
-function tableclear() {
-  document.getElementById("leagueTable").innerHTML = '';
+        select.selectedIndex = 0;
+        
+      } else {
+        alert("저장에 실패 했습니다.");
+      }
+    }
 }
 
 function loadGame() {
@@ -158,6 +84,7 @@ function loadGame() {
                 opt.text = jsonResponse[i].title;
                 // opt.innerHTML = i;
                 select.appendChild(opt);
+                gamelist.push(jsonResponse[i]);
             }
           //정상 여부 확인 필요 할듯
         } else {
@@ -165,6 +92,145 @@ function loadGame() {
         }
       }
     
+  }
+
+  function loadGameTable() {
+    tableclear();
+    var xhttp = new XMLHttpRequest();
+    url = "http://52.79.188.98:3000/game/getmatches?event_id=9";
+    xhttp.open("get", url, false);
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send();
+
+    if (xhttp.readyState === 4) {
+          if (xhttp.status === 200) {
+            var jsonResponse = JSON.parse(xhttp.responseText);
+            makeTable(Object.keys(jsonResponse).length, jsonResponse); 
+          }
+      } else {
+        alert(xhttp.responseText);
+      }
+
+      
+    }
+
+  function tableclear() {
+    document.getElementById("leagueTable").innerHTML = '';
+  } 
+
+  function makeTable(count, jsonResponse) {
+    var Tableline = count / 4;
+    var TablelineLast = count % 4;
+    var index = 1;
+
+    var keys = [];
+    for (var key in jsonResponse) {
+      if (jsonResponse.hasOwnProperty(key)) {
+        keys.push(key);
+      }
+    }
+
+    for(var i = 0; i < Tableline; i++)
+    {
+        makeHeader(4, index);
+        // makeBody(4, index, jsonResponse[keys[index-1]]);
+        makeBody(4, index, jsonResponse, keys);
+        index += 4;
+    }
+
+    if(TablelineLast > 0)
+    {
+      makeHeader(TablelineLast, index);
+      makeBody(TablelineLast, index);
+    }
+
+    // makeBody(TablelineLast, index);
+    
+    // var table = document.createElement("TABLE");
+    // table.setAttribute("id", "myTable");
+    // document.getElementById("leagueTable").appendChild(table);
+
+  } 
+
+  function makeHeader(count, index) {
+    var thead = document.createElement("thead");
+    thead.setAttribute("id", "myThead"+index);
+    document.getElementById("leagueTable").appendChild(thead)
+
+    var Headtr = document.createElement("tr");
+    Headtr.setAttribute("id", "myHTr"+index);
+    document.getElementById("myThead"+index).appendChild(Headtr);
+
+    for(var i = 0; i < count; i++) {
+      var Htd = document.createElement("th");
+      var HText = document.createTextNode(index+i+"조");
+      Htd.appendChild(HText);
+      document.getElementById("myHTr"+index).appendChild(Htd);
+    }
+    
+
+  }
+
+  function makeBody(count, index, jsonResponse, keys) {
+    var tbody = document.createElement("tbody");
+    tbody.setAttribute("id", "myTbody"+index);
+    document.getElementById("leagueTable").appendChild(tbody);
+
+    for(var i = 0; i < count; i++) {
+      // var bodyTR = document.createElement("tr");
+      // bodyTR.setAttribute("id", "myTr"+index+i);
+      // document.getElementById("myTbody"+index).appendChild(bodyTR);
+    }
+
+for(var i = 0; i < count; i++) {
+    var data = jsonResponse[keys[index-1+i]].matches;
+    var textlist = makeMatchText(data);
+
+
+
+    for(var j = 0; j < textlist.length; j++)
+    {
+      // for(var i = 0; i < count; i++) {
+       
+       var bodyTR = document.createElement("tr");
+      bodyTR.setAttribute("id", "myTr"+index+j);
+      document.getElementById("myTbody"+index).appendChild(bodyTR);
+
+          var bodyTD = document.createElement("td");
+          var z = document.createTextNode(textlist[j]);
+          bodyTD.appendChild(z);
+          document.getElementById("myTr"+index+j).appendChild(bodyTD);
+      // }
+    }
+  }
+
+  }
+
+  function makeMatchText(data)
+  {
+    var textlist =[];
+    var text = "";
+    for(var i = 0; i < data.length; i++)
+    {
+      if(data[i].teams.length == 2)
+      {
+        text += data[i].teams[0].name;
+        text += " vs ";
+        text += data[i].teams[1].name;
+      }
+      else if (data[i].teams.length == 4) {
+        text += data[i].teams[0].name;
+        text += " & ";
+        text += data[i].teams[1].name;
+        text += " vs ";
+        text += data[i].teams[2].name;
+        text += " & ";
+        text += data[i].teams[3].name;
+      }
+      textlist.push(text);
+      text = "";
+    }
+    return textlist;
   }
 </script>
 
@@ -251,13 +317,36 @@ function loadGame() {
       
       <form method="post" action="#">
       <div id="leagueTable" class="scrollable">
+      <strong>1조</strong>
         <table id="leagueTable">
           <thead>
             <tr>
-              <th>Header 1</th>
-              <th>Header 2</th>
-              <th>Header 3</th>
-              <th>Header 4</th>
+              <th>1 Game</th>
+              <th>2 Game</th>
+              <th>3 Game</th>
+              <th>4 Game</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="firstGame">
+              <td><a href="#">Value 1</a></td>
+              <td>Value 2</td>
+              <td>Value 3</td>
+              <td>Value 4</td>
+            </tr>
+            <tr>
+              <td>Value 4</td>
+            </tr>
+          </tbody>
+        </table>
+ <p>2조</p>
+        <table id="leagueTable2">
+          <thead>
+            <tr>
+              <th>1 Game</th>
+              <th>2 Game</th>
+              <th>3 Game</th>
+              <th>4 Game</th>
             </tr>
           </thead>
           <tbody>
@@ -267,39 +356,7 @@ function loadGame() {
               <td>Value 3</td>
               <td>Value 4</td>
             </tr>
-            <tr>
-              <td>Value 5</td>
-              <td>Value 6</td>
-              <td>Value 7</td>
-              <td><a href="#">Value 8</a></td>
-            </tr>
-            <tr>
-              <td>Value 9</td>
-              <td>Value 10</td>
-              <td>Value 11</td>
-              <td>Value 12</td>
-            </tr>
-            <tr>
-              <td>Value 13</td>
-              <td><a href="#">Value 14</a></td>
-              <td>Value 15</td>
-              <td>Value 16</td>
-            </tr>
           </tbody>
-          <thead>
-            <tr>
-              <th>Header 1</th>
-              <th>Header 2</th>
-              <th>Header 3</th>
-              <th>Header 4</th>
-            </tr>
-            <tbody>
-            <tr>
-              <td><a href="#">Value 1</a></td>
-              
-            </tr>
-            </tbody>
-          </thead>
         </table>
       </div>
       </form>
@@ -312,12 +369,9 @@ function loadGame() {
 <!-- ################################################################################################ -->
 <!-- ################################################################################################ -->
 <a id="backtotop" href="#top"><i class="fa fa-chevron-up"></i></a>
-<!-- JAVASCRIPTS -->
-<script type="text/javascript">
-  tableclear();
-</script>
 <script src="layout/scripts/jquery.min.js"></script>
 <script src="layout/scripts/jquery.backtotop.js"></script>
 <script src="layout/scripts/jquery.mobilemenu.js"></script>
+
 </body>
 </html>
