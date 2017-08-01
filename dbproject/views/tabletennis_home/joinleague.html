@@ -292,7 +292,7 @@ var partnerClubID ="";
     url += "&grade=" + playerFrm.Grade.value;
     url += "&gender=" + playerFrm.Gender.value;
     // url += "&passwd=" + playerFrm.password.value;
-    url += "&passwd=" + 0000;
+    url += "&passwd=" + "0000";
     xhttp.open("get", url, false);
     xhttp.setRequestHeader("Content-type", "application/json");
     xhttp.send();
@@ -359,7 +359,7 @@ var partnerClubID ="";
     url += "&grade=" + playerFrm.PGrade.value;
     url += "&gender=" + playerFrm.PGender.value;
     // url += "&passwd=" + playerFrm.Ppassword.value;
-    url += "&passwd=" + 0000;
+    url += "&passwd=" + "0000";
     xhttp.open("get", url, false);
     xhttp.setRequestHeader("Content-type", "application/json");
     xhttp.send();
@@ -599,8 +599,8 @@ var partnerClubID ="";
 			<input id="Grade" class="btmspace-15" type="text" value="" placeholder="Grade">
       <div class="select-style" style="float: left; width: 100%;"">
       <select class="btmspace-15" id="Gender">
-        <option value="male"> male </option>
-      <option value="female"> female </option>
+        <option value="M"> male </option>
+      <option value="F"> female </option>
       </select>
       </div>
       <!-- <input id="password" class="btmspace-15" type="text" value="" placeholder="password"> -->
@@ -619,8 +619,8 @@ var partnerClubID ="";
       <input id="PGrade" class="btmspace-15" type="text" value="" placeholder="Partner Grade">
       <div class="select-style" style="float: left; width: 100%;"">
       <select class="btmspace-15" id="PGender">
-        <option value="male"> male </option>
-      <option value="female"> female </option>
+        <option value="M"> male </option>
+      <option value="F"> female </option>
       </select>
       </div>
       <!-- <input id="Ppassword" class="btmspace-15" type="text" value="" placeholder="Partner password"> -->
