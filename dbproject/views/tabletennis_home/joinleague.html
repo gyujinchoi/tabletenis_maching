@@ -25,6 +25,9 @@ var eventlist = [];
 var clubID ="";
 var eventID = "";
 var playerID ="";
+var eventType = 1;
+var partnerID ="";
+var partnerClubID ="";
 
 	//page load시 대회 정보 및 클럽 정보 조회
 	window.onload = function(){
@@ -221,10 +224,61 @@ var playerID ="";
     }
   }
 
+  function updatePartnerClubInfo(object)
+  {
+    // var club = document.getElementById('Club');
+    // var index = clublist.indexOf(object.value);
+    var array = clublist.filter( function(item) {
+      return item.name === object.value;
+
+    });
+
+    if(array.length != 0)
+    {
+      var clubphoneinput = document.getElementById('Pclubphoneinput');
+      clubphoneinput.value = array[0].phone;
+    }
+  }
+
+  
+
+  function updatePartnerInfo(object)
+  {
+    var array = player.filter( function(item) {
+      return item.name === object.value;
+
+    });
+
+    if(array.length != 0)
+    {
+      var Phone = document.getElementById('PPhone');
+      Phone.value = array[0].phone;
+
+      var Grade = document.getElementById('PGrade');
+      Grade.value = array[0].grade;
+
+      var Gender = document.getElementById('PGender');
+      Gender.value = array[0].Gender;
+      if(array[0].gender == 'M') 
+      {
+          Gender.selectedIndex = 0;
+      }
+      else {
+        Gender.selectedIndex = 1;
+      }
+
+    }
+  }
+
   function applySubmit()
   {
     savePlayer();
     saveGroup();
+    if(eventType != 1)
+    {
+      savePartner();
+      savePartnerGroup();
+    }
     saveApply();
   }
 
@@ -294,18 +348,15 @@ var playerID ="";
       }
   }
 
-  function saveApply()
+  function savePartner()
   { 
-     // var array = eventlist.filter( function(item) {
-     //        return item.name === playerFrm.Club.value;
-     //  });
-    eventID = playerFrm.game.value;
     var xhttp = new XMLHttpRequest();
-    var url = "http://52.79.188.98:3000/player/apply?";
-    url += "player_id=" + playerID;
-    url += "&group_id=" + clubID;
-    url += "&event_id=" + eventID;
-
+    var url = "http://52.79.188.98:3000/player/add?";
+    url += "name=" + playerFrm.PNameinput.value;
+    url += "&phone=" + playerFrm.PPhone.value;
+    url += "&grade=" + playerFrm.PGrade.value;
+    url += "&gender=" + playerFrm.PGender.value;
+    url += "&passwd=" + playerFrm.Ppassword.value;
     xhttp.open("get", url, false);
     xhttp.setRequestHeader("Content-type", "application/json");
     xhttp.send();
@@ -313,23 +364,128 @@ var playerID ="";
     if (xhttp.readyState === 4) {
         if (xhttp.status === 200) {
           var jsonResponse = JSON.parse(xhttp.responseText); 
+          partnerID = jsonResponse[0].player_id;
+          //정상 여부 확인 필요 할듯
+        } else {
+          // alert(xhttp.responseText);
+          var data = xhttp.responseText;
+
+          var array = player.filter( function(item) {
+            return item.name === playerFrm.PNameinput.value;
+          });
+
+          if(array.length != 0)
+          {
+            partnerID = array[0].player_id;
+          }
+        }
+      }
+  }
+
+  function savePartnerGroup()
+  { 
+    var xhttp = new XMLHttpRequest();
+    var url = "http://52.79.188.98:3000/player/addgroup?";
+    url += "name=" + playerFrm.Pclubinput.value;
+    url += "&phone=" + playerFrm.Pclubphoneinput.value;
+    xhttp.open("get", url, false);
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send();
+    
+    if (xhttp.readyState === 4) {
+        if (xhttp.status === 200) {
+          var jsonResponse = JSON.parse(xhttp.responseText); 
+          partnerClubID = jsonResponse[0].group_id;
           
           //정상 여부 확인 필요 할듯
         } else {
           // alert(xhttp.responseText);
           var data = xhttp.responseText;
+
+          var array = clublist.filter( function(item) {
+            return item.name === playerFrm.PClub.value;
+          });
+
+          if(array.length != 0)
+          {
+            partnerClubID = array[0].group_id;
+          }
         }
       }
+  }
+
+  function saveApply()
+  { 
+     // var array = eventlist.filter( function(item) {
+     //        return item.name === playerFrm.Club.value;
+     //  });
+    eventID = playerFrm.game.value;
+    var xhttp = new XMLHttpRequest();
+    if(eventType == 1)
+    {
+      var url = "http://52.79.188.98:3000/player/apply?";
+      url += "player_id=" + playerID;
+      url += "&group_id=" + clubID;
+      url += "&event_id=" + eventID;
+
+      xhttp.open("get", url, false);
+      xhttp.setRequestHeader("Content-type", "application/json");
+      xhttp.send();
+      
+      if (xhttp.readyState === 4) {
+          if (xhttp.status === 200) {
+            var jsonResponse = JSON.parse(xhttp.responseText); 
+            
+            //정상 여부 확인 필요 할듯
+          } else {
+            // alert(xhttp.responseText);
+            var data = xhttp.responseText;
+          }
+        }
+    }
+    else
+    {
+      var url = "http://52.79.188.98:3000/player/applydouble?";
+      url += "player_id_1=" + playerID;
+      url += "&group_id_1=" + clubID;
+      url += "&player_id_2=" + partnerID;
+      url += "&group_id_2=" + partnerClubID;
+      url += "&event_id=" + eventID;
+
+      xhttp.open("get", url, false);
+      xhttp.setRequestHeader("Content-type", "application/json");
+      xhttp.send();
+      
+      if (xhttp.readyState === 4) {
+          if (xhttp.status === 200) {
+            var jsonResponse = JSON.parse(xhttp.responseText); 
+            
+            //정상 여부 확인 필요 할듯
+          } else {
+            // alert(xhttp.responseText);
+            var data = xhttp.responseText;
+          }
+        }
+    }
+    
   }
 
   function updateGameInfo()
   {
     if(eventlist[playerFrm.game.selectedIndex].type.length > 1)
     {
+      eventType = 0;
+      document.getElementById("partner").style.display="block"
+    }
+    else {
+      eventType =1;
+      document.getElementById("partner").style.display="none"
 
     }
     
   }
+
+  // function
 
 
 
@@ -437,13 +593,30 @@ var playerID ="";
       </select>
       </div>
       <input id="password" class="btmspace-15" type="text" value="" placeholder="password">
-      <!-- <input id="Gender" list="genderlist" class="btmspace-15" type="text" value="" placeholder="Gender">
-      <datalist id="genderlist">
-      <option value="male">
-      <option value="female">
-      </datalist>  -->
-			<input type="submit" value="참가 신청"  style="cursor:pointer" onclick="applySubmit()"></input>
-          </fieldset>
+      <div id="partner" name="addPlayer" style="display:none">
+      <p>Partner Info</p>
+      <input id="Pclubinput" list="Club" class="btmspace-15" type="text" value="" placeholder="Name of Partner's Club" onchange="updatePartnerClubInfo(this)" >
+      <datalist id="Club">
+      </datalist> 
+      <input id="Pclubphoneinput" list="ClubPhone" class="btmspace-15" type="text" value="" placeholder="Phone number for Partner's Club">
+      <datalist id="ClubPhone">
+      </datalist> 
+    <input id="PNameinput" list="Name" class="btmspace-15" type="text" value="" placeholder="Partner Name" onchange="updatePartnerInfo(this)">
+      <datalist id="Name">
+      </datalist> 
+      <input id="PPhone" class="btmspace-15" type="text" value="" placeholder="Partner Phone">
+      <input id="PGrade" class="btmspace-15" type="text" value="" placeholder="Partner Grade">
+      <div class="select-style" style="float: left; width: 100%;"">
+      <select class="btmspace-15" id="PGender">
+        <option value="male"> male </option>
+      <option value="female"> female </option>
+      </select>
+      </div>
+      <input id="Ppassword" class="btmspace-15" type="text" value="" placeholder="Partner password">
+      </div>
+			
+      <input type="submit" value="참가 신청"  style="cursor:pointer" onclick="applySubmit()"></input>
+      </fieldset>
       </form>
     
     <!-- ################################################################################################ -->
@@ -458,5 +631,6 @@ var playerID ="";
 <script src="layout/scripts/jquery.min.js"></script>
 <script src="layout/scripts/jquery.backtotop.js"></script>
 <script src="layout/scripts/jquery.mobilemenu.js"></script>
+
 </body>
 </html>

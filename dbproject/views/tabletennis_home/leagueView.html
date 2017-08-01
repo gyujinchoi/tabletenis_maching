@@ -23,9 +23,9 @@ var gamelist = [];
       //competition 조회
       loadleague();
       //Event 조회
-      loadGame();
+      loadEvent();
       //GameTable 조회
-      loadGameTable();
+      // loadGameTable();
   }
 
 
@@ -61,7 +61,7 @@ function loadleague() {
     }
 }
 
-function loadGame() {
+function loadEvent() {
     var xhttp = new XMLHttpRequest();
     var url = "http://52.79.188.98:3000/competition/event/get";
     var selectCompetion = document.getElementById('competition');
@@ -91,13 +91,15 @@ function loadGame() {
           alert(xhttp.responseText);
         }
       }
+
+      loadGameTable();
     
   }
 
   function loadGameTable() {
     tableclear();
     var xhttp = new XMLHttpRequest();
-    url = "http://52.79.188.98:3000/game/getmatches?event_id=9";
+    url = "http://52.79.188.98:3000/game/getmatches?event_id="+competitionForm.game.value;
     xhttp.open("get", url, false);
     xhttp.setRequestHeader("Content-type", "application/json");
     xhttp.send();
@@ -232,6 +234,13 @@ for(var i = 0; i < count; i++) {
     }
     return textlist;
   }
+
+
+  function updateGameInfo()
+  {
+    loadGameTable();
+  }
+
 </script>
 
  <style type="text/css">
@@ -308,14 +317,16 @@ for(var i = 0; i < count; i++) {
   <div class="wrapper row1">
   <footer id="footer" class="hoc clear"> 
     <!-- ################################################################################################ -->
-      <div class="select-style" style="float: left; width: 50%;"">
-      <select class="btmspace-15" id="competition" onchange="loadGame()"></select>
+     
+      
+      <form name="competitionForm" method="post" action="#">
+       <div class="select-style" style="float: left; width: 50%;"">
+      <select class="btmspace-15" id="competition" onchange="loadEvent()"></select>
       </div>
       <div class="select-style" style="float: left; width: 49%;">
-      <select class="btmspace-15" id="game"></select>
+      <select class="btmspace-15" id="game" onchange="updateGameInfo()" ></select>
       </div>
-      
-      <form method="post" action="#">
+
       <div id="leagueTable" class="scrollable">
       <strong>1조</strong>
         <table id="leagueTable">
