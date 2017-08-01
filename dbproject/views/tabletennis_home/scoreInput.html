@@ -92,7 +92,7 @@ function loadEvent() {
         }
       }
 
-      loadGameTable();
+      // loadGameTable();
     
   }
 
@@ -306,7 +306,7 @@ function loadEvent() {
       <!-- ################################################################################################ -->
     </nav>
 
-<div class="bgded" style="background-image:url('images/demo/backgrounds/tabletennis.jpg');"> 
+<div class="bgded" style="background-image:url('images/demo/backgrounds/01.png');"> 
   <!-- ################################################################################################ -->
   <!-- ################################################################################################ -->
   <!-- ################################################################################################ -->
@@ -323,28 +323,41 @@ function loadEvent() {
       <select class="btmspace-15" id="game" onchange="updateGameInfo()" ></select>
       </div>
 
-      <div id="leagueTable" class="scrollable">
-      <strong>1조</strong>
-        <table id="leagueTable">
+      
+     <input type="submit" class="btmspace-15" value="점수 반영" style="cursor:pointer" onclick="saveCompetition()"></input>
+     <div id="leagueTable" class="scrollable">
+      <table id="1TeamLeague">
+        <thead>
+        <tr>
+        <th colspan="4" align="center"> 1조 </th>
+        </tr>
+        </thead>
           <thead>
             <tr>
-              <th>1 Game</th>
-              <th>2 Game</th>
-              <th>3 Game</th>
-              <th>4 Game</th>
+              <th align="center">1팀</th>
+              <th colspan="2" align="center">점수</th>
+              <th align="center">2팀</th>
             </tr>
           </thead>
           <tbody>
             <tr id="firstGame">
-              <td><a href="#">Value 1</a></td>
-              <td>Value 2</td>
-              <td>Value 3</td>
-              <td>Value 4</td>
+              <td align="center" width="25%" ><a href="#">하승우</a></td>
+              <td contenteditable width="25%" align="center">1</td>
+              <td contenteditable width="25%" align="center">3</td>
+              <td align="center" width="25%" >최인달</td>
             </tr>
-            <tr>
-              <td>Value 4</td>
+
+            <tr id="firstGame">
+              <td align="center" width="25%" ><a href="#">하승우</a></td>
+              <td contenteditable width="25%" align="center">1</td>
+              <td contenteditable width="25%" align="center">3</td>
+              <td align="center" width="25%" >최인달</td>
             </tr>
+            
           </tbody>
+
+          <thead>
+        <tr>
         </table>
  <p>2조</p>
         <table id="leagueTable2">

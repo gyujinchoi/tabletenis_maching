@@ -46,7 +46,7 @@ Licence URI: http://www.os-templates.com/template-terms
         if (xhttp.status === 200) {
           var jsonResponse = JSON.parse(xhttp.responseText); 
           // alert(xhttp.responseText);
-          window.open("makeGameType.html?leagueTitle="+jsonResponse[0].title+"&leagueID="+jsonResponse[0].competition_id);
+          window.open("makeGameType.html?leagueID="+jsonResponse[0].competition_id);
           //정상 여부 확인 필요 할듯
         } else {
           alert(xhttp.responseText);
@@ -87,9 +87,15 @@ Licence URI: http://www.os-templates.com/template-terms
       <ul class="clear">
         <li><a href="index.html">Home</a></li>
         <li class="active"><a href="#">MAKE LEAGUE</a></li>
-        <li><a href="makeGameType.html">MAKE GAME EVENTS</a></li>
+        <!-- <li><a href="makeGameType.html">MAKE GAME EVENTS</a></li> -->
         <li><a href="joinleague.html">JOIN LEAGUE</a></li>
         <li><a href="leagueView.html">GAME TABLE</a></li>
+        <li><a class="drop" href="#">GAME STATUS</a>
+          <ul>
+            <li><a href="score.html">Score Status</a></li>
+            <li><a href="scoreInput.html">Score Input</a></li>
+          </ul>
+        </li>
       </ul>
       <!-- ################################################################################################ -->
     </nav>
@@ -107,7 +113,7 @@ Licence URI: http://www.os-templates.com/template-terms
           <legend>Newsletter:</legend>
           <input id="Title" class="btmspace-15" type="text" value="" placeholder="Title">
           <input id="Phone" class="btmspace-15" type="text" value="" placeholder="Phone">
-          <input id="password" class="btmspace-15" type="text" value="" placeholder="password">
+          <!-- <input id="password" class="btmspace-15" type="text" value="" placeholder="password"> -->
           <input id="StartDate" class="btmspace-15" type="datetime-local" value="" placeholder="StartDate" >
           <input id="EndDate" class="btmspace-15" type="datetime-local" value="" placeholder="EndDate">
           <input id="Place" class="btmspace-15" type="text" value="" placeholder="Place">
