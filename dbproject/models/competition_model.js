@@ -13,7 +13,7 @@ var competition_model={
     
     //ID로 조회
     getCompetitionById:function(id,callback){
-        return db.query("SELECT * FROM competition WHERE id=?",[competition.id],callback);
+        return db.query("SELECT * FROM competition WHERE competition_id=?",[id],callback);
     },
 
     //대회 추가
