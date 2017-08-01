@@ -135,7 +135,7 @@ player_model = {
     },
 
 
-    getPlayersOfEvent(event_id, callback) {
+    getPlayersOfEvent: function (event_id, callback) {
         var query_string = "select distinct player.*, parti.participant_id, parti.group_id, parti.event_id, parti.partner_id "
         query_string += "from player, participant as parti where parti.event_id = " + event_id;
         query_string += " and player.player_id = parti.player_id";
@@ -144,7 +144,7 @@ player_model = {
     },
 
     //모든 round에 대한 시합(match, game, participant, player) 정보를 모두 join한 결과를 반환함.
-    getPlayersOfAllMatches(event_id, callback) {한
+    getPlayersOfAllMatches: function (event_id, callback) {한
         return db.query("SELECT distinct tabletennis_competitions.`game`.*,\n" +
             " match_t.match_id, match_t.match_order,\n" +
             " participant.participant_id, participant.partner_id, participant.group_id,\n" +
@@ -157,7 +157,7 @@ player_model = {
     },
 
     //round별 시합(match, game, participant, player) 정보를 모두 join한 결과를 반환함.
-    getPlayersOfMatches(event_id, round, callback) {
+    getPlayersOfMatches: function (event_id, round, callback) {
         return db.query("SELECT distinct tabletennis_competitions.`game`.*,\n" +
                         " match_t.match_id, match_t.match_order,\n" +
                         " participant.participant_id, participant.partner_id, participant.group_id,\n" +
@@ -168,6 +168,29 @@ player_model = {
                         " order by game.game_order, match_t.match_order;",
                         [event_id, round], callback)
     },
+
+    getPlayersOfMatchesFromView: function (event_id, round, callback) {
+        return db.query("select * from event where event_id=?", [event_id], function(err, event_rows) {
+            if (err)
+                callback(err, event_rows);
+            else {
+                var values = [];
+                var query_string = "select * from tabletennis_competitions.";
+                if (event_rows[0].type.length == 1)
+                    query_string += "view_single_match_participant_list";
+                else
+                    query_string += "view_double_match_participant_list";
+                query_string += " where event_id = ?";
+                values.push(event_id);
+                if (round >= 0) {
+                    query_string += "and game_round = ?";
+                    values.push(round);
+                }
+                return db.query(query_string, values, callback);
+            }
+        });
+    },
+
 
     getAllParticipants: function (callback) {
         return db.query("select * from participant",

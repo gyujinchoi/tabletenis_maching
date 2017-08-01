@@ -185,21 +185,6 @@ var competition_model={
     },
 
     getScoreCards:function(key, values, callback) {
-        /*
-            var score_card = {
-                set : 1,
-                point: 0,
-            }
-
-            var score_card_record = {
-                score_card_id:
-                match_id:
-            }
-         */
-        /*
-        SELECT * FROM tabletennis_competitions.view_score_cards
-        where match_id not in (5999 ,5998)
-        */
         var query_string = "select * from tabletennis_competitions.view_score_cards\n";
 
         if (key != "") {

@@ -481,4 +481,20 @@ router.get('/getscores?', function(req, res, next) {
         competition_model.getScoreCards("", [], getscores_callback);
 });
 
+router.get('/getmatchesfromview?', function(req, res, next) {
+    if (req.query.event_id) {
+        var round = -1;
+        if (req.query.round)
+            round = req.query.round;
+        player_model.getPlayersOfMatchesFromView(req.query.event_id, round, function getscores_callback(err, rows) {
+            if (err) {
+                res.status(401);
+                res.json(err);
+            } else {
+                res.json(rows);
+            }
+        });
+    }
+});
+
 module.exports=router;
