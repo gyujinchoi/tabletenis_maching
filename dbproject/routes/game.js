@@ -406,6 +406,7 @@ router.get('/getmatches?', function(req, res, next){
                         var player = {
                             participant_id: match_rows[index].participant_id,
                             group_id: match_rows[index].group_id,
+                            match_id: match_rows[index].match_id,
                             player_id: -1,
                             partner_id: match_rows[index].partner_id == null ? 0 : match_rows[index].partner_id,
                             name: match_rows[index].name,
@@ -438,6 +439,46 @@ router.get('/getmatches?', function(req, res, next){
         res.json("error: event id must be inputed.");
     }
 
+});
+
+router.get('/addscore?', function(req, res, next) {
+    //req.query.point
+    //
+    //console.log(req.query.match_ids);
+    if(req.query.match_ids && req.query.set && req.query.point) {
+        var score_card = {
+            set: req.query.set,
+            point: req.query.point
+        };
+
+        competition_model.addScoreCard(req.query.match_ids, score_card, function (err, rows) {
+            if(err) {
+                res.status(401);
+                res.json(err);
+            }else {
+                res.json(rows);
+            }
+        });
+    }else {
+        res.status(401);
+        res.json("error: wrong query parameters.");
+    }
+});
+
+router.get('/getscores?', function(req, res, next) {
+    function getscores_callback(err, rows) {
+        if (err) {
+            res.status(401);
+            res.json(err);
+        } else {
+            res.json(rows);
+        }
+    };
+
+    if(req.query.key && req.query.values)
+        competition_model.getScoreCards(req.query.key, req.query.values, getscores_callback);
+    else
+        competition_model.getScoreCards("", [], getscores_callback);
 });
 
 module.exports=router;

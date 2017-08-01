@@ -149,8 +149,66 @@ var competition_model={
     //정보 업데이트
     updateCompetition:function(id,competition,callback){
         return db.query("UPDATE competition SET name=?",[competition.name], callback);
+    },
+
+    addScoreRecord:function(match_ids, score_card_id, callback){
+        var query_string = "insert into tabletennis_competitions.score_record (match_id, score_card_id)\n"
+                        + " values ";
+
+        if(match_ids.length <= 2 && match_ids.length > 0) {
+            query_string += "(" + match_ids[0] +", "+score_card_id+")";
+            if (match_ids.length > 1)
+                query_string += ",(" + match_ids[1] +", "+score_card_id+")";
+            query_string += ";";
+        }
+        console.log(query_string);
+        return db.query(query_string, callback);
+    },
+
+    addScoreCard:function(match_ids, score_card, callback) {
+        /*
+            var score_card = {
+                set : 1,
+                point: 0,
+            }
+
+            var score_card_record = {
+                score_card_id:
+                match_id:
+            }
+         */
+        var query_string = "insert into tabletennis_competitions.score_card (tabletennis_competitions.score_card.set, point) values ("
+                        + score_card.set + ", " + score_card.point + ");\n";
+        db.query(query_string, function(err, result){
+            competition_model.addScoreRecord(match_ids, result.insertId, callback);
+        });
+    },
+
+    getScoreCards:function(key, values, callback) {
+        /*
+            var score_card = {
+                set : 1,
+                point: 0,
+            }
+
+            var score_card_record = {
+                score_card_id:
+                match_id:
+            }
+         */
+        /*
+        SELECT * FROM tabletennis_competitions.view_score_cards
+        where match_id not in (5999 ,5998)
+        */
+        var query_string = "select * from tabletennis_competitions.view_score_cards\n";
+
+        if (key != "") {
+            query_string += "where " + key + " in (?)";
+        }
+
+        console.log(query_string);
+        return db.query(query_string, [values], callback);
     }
- 
 };
 
 module.exports=competition_model;
