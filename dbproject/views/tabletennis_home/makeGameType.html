@@ -27,7 +27,30 @@ var urlParams = location.search.split(/[?&]/).slice(1).map(function(paramPair) {
 
     }, {});
 
-  function requestleagueID() {
+var leagueTitle = "";
+var leagueInfo = [];
+
+requestleagueInfo();
+  function requestleagueInfo() {
+
+    var xhttp = new XMLHttpRequest();
+    var url = "http://52.79.188.98:3000/competition/id?";
+    url += "id=" + urlParams.leagueID;
+    
+    xhttp.open("get", url, false);
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send();
+    
+    if (xhttp.readyState === 4) {
+        if (xhttp.status === 200) {
+          var jsonResponse = JSON.parse(xhttp.responseText); 
+          for (var i = 0; i<jsonResponse.length; i++){
+           leagueInfo.push(jsonResponse[i]);
+          }
+        } else {
+          alert(xhttp.responseText);
+        }
+      }
     
   }
   
@@ -68,8 +91,8 @@ var urlParams = location.search.split(/[?&]/).slice(1).map(function(paramPair) {
   <div class="wrapper row1">
   <footer id="footer" class="hoc clear"> 
     <!-- ################################################################################################ -->
-      <label for="name">LeagueName <span>*</span></label>
-       <input id="leaguename" value="" placeholder="Title of league" />
+      <label for="name">게임 만들기 </label>
+       <input id="leaguename" class="btmspace-15" value="" readonly placeholder="Title of league" />
        
        <div style="float: left; width: 10%;">
           <button type="submit" value="submit" onclick="add_item()">Add</button>
@@ -80,20 +103,20 @@ var urlParams = location.search.split(/[?&]/).slice(1).map(function(paramPair) {
           </div> --> 
           
 
-      <form method="post" action="#">
+      <form name="gameTypeform">
         <fieldset>
           <legend>Newsletter:</legend>
          <div id="field">
-          <div id="added_0">
-              <input class="btmspace-15" type="text" value="" placeholder="Title *">
-              <input class="btmspace-15" type="text" value="" placeholder="Max Grade *">
-              <input class="btmspace-15" type="text" value="" placeholder="Min Grade *">
-              <input class="btmspace-15" type="text" value="" placeholder="Type (M, F, MF) *">
-              <input class="btmspace-15" type="text" value="" placeholder="rule_of_league *">
+          <div name="addGameType">
+              <input id="title" class="btmspace-15" type="text" value="" placeholder="Title">
+              <input id="maxGrade" class="btmspace-15" type="text" value="" placeholder="Max Grade">
+              <input id="minGrade" class="btmspace-15" type="text" value="" placeholder="Min Grade">
+              <input id="Type" class="btmspace-15" type="text" value="" placeholder="Type (M, F, MF)">
+              <input id="rule" class="btmspace-15" type="text" value="" placeholder="rule_of_league">
             </div>
           </div>
           
-          <input type="submit" value="등록하기" style="cursor:pointer"></input>
+          <input type="submit" value="등록하기" style="cursor:pointer" onclick="makeGameType()"></input>
           </fieldset>
 
       </form>
@@ -127,21 +150,89 @@ var urlParams = location.search.split(/[?&]/).slice(1).map(function(paramPair) {
         document.getElementById('field').removeChild(obj.parentNode);
         count--;
     }
-    if(urlParams.leagueTitle != undefined) {
-      document.getElementById("leaguename").value= urlParams.leagueTitle; 
+
+    function makeGameType() {
+      var allList = document.getElementById('field');
+      for (var i = 0; i<allList.childNodes.length; i++){
+        if(allList.childNodes[i].nodeName == "DIV")
+        {
+          var title = "";
+          var maxGrade = "";
+          var minGrade = "";
+          var Type = "";
+          var rule = "";
+          for(var j = 0; j < allList.childNodes[i].childNodes.length; j++)
+          {
+            if(allList.childNodes[i].childNodes[j].id == "title")
+            {
+              title = allList.childNodes[i].childNodes[j].value;
+            }
+            if(allList.childNodes[i].childNodes[j].id == "maxGrade")
+            {
+              maxGrade = allList.childNodes[i].childNodes[j].value;
+            }
+            if(allList.childNodes[i].childNodes[j].id == "minGrade")
+            {
+              minGrade = allList.childNodes[i].childNodes[j].value;
+            }
+            if(allList.childNodes[i].childNodes[j].id == "Type")
+            {
+              Type = allList.childNodes[i].childNodes[j].value;
+            }
+            if(allList.childNodes[i].childNodes[j].id == "rule")
+            {
+              rule = allList.childNodes[i].childNodes[j].value;
+            }
+          }
+          callRestForGame(title, maxGrade, minGrade, Type, rule);
+        }
+
+      }
+
+    }
+
+    function callRestForGame(title, maxGrade, minGrade, Type, rule) {
+
+      var xhttp = new XMLHttpRequest();
+      var url = "http://52.79.188.98:3000/competition/event/add?";
+      url += "competition_id=" + urlParams.leagueID;
+      url += "&title=" + title;
+      url += "&max_grade=" + maxGrade;
+      url += "&min_grade=" + minGrade;
+      url += "&type=" + Type;
+      url += "&rule_of_league=" + rule;
+      
+      xhttp.open("get", url, false);
+      xhttp.setRequestHeader("Content-type", "application/json");
+      xhttp.send();
+      
+      if (xhttp.readyState === 4) {
+          if (xhttp.status === 200) {
+            var jsonResponse = JSON.parse(xhttp.responseText); 
+            alert(jsonResponse);
+          } else {
+            alert(xhttp.responseText);
+          }
+        }
+    }
+
+    if(leagueInfo[0].title != undefined) {
+      document.getElementById("leaguename").value= leagueInfo[0].title; 
     }
     else {
 
     }
+
+
 //-->
 </script>
-<div id="pre_set" style="display:none">
+<div id="pre_set" name="addGameType" style="display:none">
     <button type="submit" value="submit" onclick="remove_item(this)">delete</button>
-    <input class="btmspace-15" type="text" value="" placeholder="Title">
-    <input class="btmspace-15" type="text" value="" placeholder="Max Grade">
-    <input class="btmspace-15" type="text" value="" placeholder="Min Grade">
-    <input class="btmspace-15" type="text" value="" placeholder="Type (M, F, MF)">
-    <input class="btmspace-15" type="text" value="" placeholder="rule_of_league">
+    <input id="title" class="btmspace-15" type="text" value="" placeholder="Title">
+    <input id="maxGrade" class="btmspace-15" type="text" value="" placeholder="Max Grade">
+    <input id="minGrade" class="btmspace-15" type="text" value="" placeholder="Min Grade">
+    <input id="Type" class="btmspace-15" type="text" value="" placeholder="Type (M, F, MF)">
+    <input id="rule" class="btmspace-15" type="text" value="" placeholder="rule_of_league">
 </div>
 </body>
 </html>
