@@ -45,8 +45,8 @@ router.get('/getCompetitionTitle',function(req,res,next){
 
 router.get('/id?',function(req,res,next){
 
-	if(req.params.id){
-		competition_model.getCompetitionById(req.params.id,function(err,rows){
+	if(req.query.id){
+		competition_model.getCompetitionById(req.query.id,function(err,rows){
 		if(err){
 			res.json(err);
 		} else{
