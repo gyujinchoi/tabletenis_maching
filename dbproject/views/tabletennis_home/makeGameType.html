@@ -209,7 +209,7 @@ requestleagueInfo();
       if (xhttp.readyState === 4) {
           if (xhttp.status === 200) {
             var jsonResponse = JSON.parse(xhttp.responseText); 
-            alert(jsonResponse);
+            alert("saved");
           } else {
             alert(xhttp.responseText);
           }

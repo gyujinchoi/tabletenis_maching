@@ -25,7 +25,7 @@ var gamelist = [];
       //Event 조회
       loadEvent();
       //GameTable 조회
-      // loadGameTable();
+      loadGameTable();
   }
 
 
@@ -92,7 +92,7 @@ function loadEvent() {
         }
       }
 
-      loadGameTable();
+      // loadGameTable();
     
   }
 
@@ -135,8 +135,11 @@ function loadEvent() {
     for(var i = 0; i < Tableline; i++)
     {
         makeHeader(4, index);
+        makeAdditionalHeader(4, index);
         // makeBody(4, index, jsonResponse[keys[index-1]]);
-        makeBody(4, index, jsonResponse, keys);
+        // for(var j = 0; j < 3; j++) {
+          makeBody(4, index, jsonResponse, keys);
+        // }
         index += 4;
     }
 
@@ -165,14 +168,116 @@ function loadEvent() {
 
     for(var i = 0; i < count; i++) {
       var Htd = document.createElement("th");
+     
       // Htd.width = "40px";
-      Htd.setAttribute("width", "400px");
-      Htd.setAttribute("align", "center");
       var HText = document.createTextNode(index+i+"조");
       Htd.appendChild(HText);
+      Htd.setAttribute("colspan", "4");
+      Htd.setAttribute("width", "400px");
+      Htd.setAttribute("align", "center");
       document.getElementById("myHTr"+index).appendChild(Htd);
     }
     
+
+  }
+
+  function makeAdditionalHeader(count, index) {
+    var thead = document.createElement("thead");
+    thead.setAttribute("id", "myAThead"+index);
+    document.getElementById("leagueTable").appendChild(thead)
+
+    var Headtr = document.createElement("tr");
+    Headtr.setAttribute("id", "myAHTr"+index);
+    document.getElementById("myAThead"+index).appendChild(Headtr);
+
+    for(var i = 0; i < count; i++) {
+      var Htd = document.createElement("th");
+     
+      // Htd.width = "40px";
+      var HText = document.createTextNode("A팀");
+      Htd.appendChild(HText);
+      Htd.setAttribute("colspan", "1");
+      Htd.setAttribute("align", "center");
+      document.getElementById("myAHTr"+index).appendChild(Htd);
+
+      var Htd2 = document.createElement("th");
+     
+      // Htd.width = "40px";
+      var HText2 = document.createTextNode("점수");
+      Htd2.appendChild(HText2);
+      Htd2.setAttribute("colspan", "2");
+      Htd2.setAttribute("align", "center");
+      document.getElementById("myAHTr"+index).appendChild(Htd2);
+
+      var Htd3 = document.createElement("th");
+
+      var HText3 = document.createTextNode("B팀");
+      Htd3.appendChild(HText3);
+      Htd3.setAttribute("colspan", "1");
+      Htd3.setAttribute("align", "center");
+      document.getElementById("myAHTr"+index).appendChild(Htd3);
+    }
+    
+
+  }
+
+  function updatescore(obj)
+  {
+    //http://localhost:3000/game/addscore?match_ids[]=1&set=1&score=11
+    //score = obj.textContent
+    //match_ids = obj.title
+    //set 는 무조건 1
+
+    var xhttp = new XMLHttpRequest();
+    var url = "http://52.79.188.98:3000/game/addscore?";
+    url += "match_ids[]=" + obj.title;
+    url += "&set=" + 1;
+    url += "&point=" + obj.textContent;
+    xhttp.open("get", url, false);
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send();
+
+    if (xhttp.readyState === 4) {
+          if (xhttp.status === 200) {
+            var jsonResponse = JSON.parse(xhttp.responseText);
+            // makeTable(Object.keys(jsonResponse).length, jsonResponse); 
+          }
+      } else {
+        // alert(xhttp.responseText);
+      }
+  }
+  function loadscore(AmatchID, BmatchID)
+  {
+    //http://52.79.188.98:3000/game/getscore?key=match_id&values[]=5999&values[]=5998
+
+    var scoreData =[];
+
+    var xhttp = new XMLHttpRequest();
+    var url = "http://52.79.188.98:3000/game/getscore?";
+    url += "key=match_id";
+    url += "&values[]=" + AmatchID;
+    url += "&values[]=" + BmatchID;
+    xhttp.open("get", url, false);
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send();
+
+    if (xhttp.readyState === 4) {
+          if (xhttp.status === 200) {
+            var jsonResponse = JSON.parse(xhttp.responseText);
+            for (var i = 0; i< jsonResponse.length; i++){
+              scoreData[i] = jsonResponse[i].point;
+              // if(scoreData[i] == undefined) {
+              //   scoreData[i] = "-";
+              // }
+              // scoreData[1] = jsonResponse[1].point;
+            }
+            // makeTable(Object.keys(jsonResponse).length, jsonResponse); 
+          }
+      } else {
+        // alert(xhttp.responseText);
+      }
+
+    return scoreData;
 
   }
 
@@ -181,21 +286,56 @@ function loadEvent() {
     tbody.setAttribute("id", "myTbody"+index);
     document.getElementById("leagueTable").appendChild(tbody);
 
+
     for(var i = 0; i < count; i++) {
         var data = jsonResponse[keys[index-1+i]].matches;
         var textlist = makeMatchText(data);
 
         for(var j = 0; j < textlist.length; j++)
         {
-          var bodyTR = document.createElement("tr");
-          bodyTR.setAttribute("id", "myTr"+index+j);
-          document.getElementById("myTbody"+index).appendChild(bodyTR);
+            var text = textlist[j].split("$$");
 
-          var bodyTD = document.createElement("td");
-          var z = document.createTextNode(textlist[j]);
-          bodyTD.appendChild(z);
-          bodyTD.setAttribute("align", "center");
-          document.getElementById("myTr"+index+j).appendChild(bodyTD);
+            var scoreData = loadscore(text[1], text[2]);
+
+            var bodyTR = document.createElement("tr");
+            bodyTR.setAttribute("id", "myTr"+index+j);
+            document.getElementById("myTbody"+index).appendChild(bodyTR);
+
+            var bodyTD = document.createElement("td");
+            var z = document.createTextNode(text[0]);
+            bodyTD.appendChild(z);
+            bodyTD.setAttribute("align", "center");
+            document.getElementById("myTr"+index+j).appendChild(bodyTD);
+
+            var bodyTD2 = document.createElement("td");
+            // var z = document.createTextNode(textlist[j]);
+            // bodyTD2.appendChild(z);
+            bodyTD2.setAttribute("align", "center");
+            bodyTD2.setAttribute("onkeyup", "updatescore(this)");
+            bodyTD2.setAttribute("title", text[1]);
+            if(scoreData[0] != undefined) {
+              var z2 = document.createTextNode(scoreData[0]);
+              bodyTD2.appendChild(z2);
+            }
+            document.getElementById("myTr"+index+j).appendChild(bodyTD2);
+
+            var bodyTD3 = document.createElement("td");
+            // var z = document.createTextNode(textlist[j]);
+            // bodyTD2.appendChild(z);
+            bodyTD3.setAttribute("align", "center");
+            bodyTD3.setAttribute("onkeyup", "updatescore(this)");
+            bodyTD3.setAttribute("title", text[2]);
+            if(scoreData[1] != undefined) {
+              var z3 = document.createTextNode(scoreData[1]);
+              bodyTD3.appendChild(z3);
+            }
+            document.getElementById("myTr"+index+j).appendChild(bodyTD3);
+
+            var bodyTD4 = document.createElement("td");
+            var z4 = document.createTextNode(text[3]);
+            bodyTD4.appendChild(z4);
+            bodyTD4.setAttribute("align", "center");
+            document.getElementById("myTr"+index+j).appendChild(bodyTD4);
         }
       }
 
@@ -210,17 +350,29 @@ function loadEvent() {
       if(data[i].teams.length == 2)
       {
         text += data[i].teams[0].name;
-        text += " vs ";
+        text += "$$";
+        text += data[i].teams[0].match_id;
+        text += "$$";
+        text += data[i].teams[1].match_id;
+        text += "$$";
         text += data[i].teams[1].name;
       }
       else if (data[i].teams.length == 4) {
         text += data[i].teams[0].name;
         text += " & ";
         text += data[i].teams[1].name;
-        text += " vs ";
+        text += "$$";
+        text += data[i].teams[0].match_id;
+        text += " & ";
+        text += data[i].teams[1].match_id;
+        text += "$$";
         text += data[i].teams[2].name;
         text += " & ";
         text += data[i].teams[3].name;
+        text += "$$";
+        text += data[i].teams[2].match_id;
+        text += " & ";
+        text += data[i].teams[3].match_id;
       }
       textlist.push(text);
       text = "";
@@ -309,7 +461,7 @@ function loadEvent() {
       <!-- ################################################################################################ -->
     </nav>
 
-<div class="bgded" style="background-image:url('images/demo/backgrounds/tabletennis.jpg');"> 
+<div class="bgded" style="background-image:url('images/demo/backgrounds/01.png');"> 
   <!-- ################################################################################################ -->
   <!-- ################################################################################################ -->
   <!-- ################################################################################################ -->
@@ -326,11 +478,12 @@ function loadEvent() {
       <select class="btmspace-15" id="game" onchange="updateGameInfo()" ></select>
       </div>
 
-      <div id="league" class="scrollable">
-      <strong>1조</strong>
-        <table id="leagueTable">
-          
+      
+     <div id="leagueTable" class="scrollable">
+      <table id="1TeamLeague">
+        
         </table>
+
       </div>
       </form>
     
