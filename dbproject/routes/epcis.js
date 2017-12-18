@@ -26,6 +26,7 @@ router.get('/epcis?',function(req,res,next){
             var serverData = '';
             response.on('data', function (chunk) {
                 serverData += chunk;
+                res.json(serverData);
             });
             response.on('end', function () {
                 //console.log(serverData);
@@ -36,7 +37,7 @@ router.get('/epcis?',function(req,res,next){
             handleResponse(response);
         }).end();
 
-        res.json(serverData);
+        //res.json(serverData);
 
     }else{
         res.status(401);
