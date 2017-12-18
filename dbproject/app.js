@@ -12,6 +12,8 @@ var competition = require('./routes/competition');
 var player = require('./routes/player');
 var game = require('./routes/game');
 
+var epcis = require('./routes/epcis');
+
 var app = express();
 
 // view engine setup
@@ -34,6 +36,7 @@ app.use('/users/apply', users);
 app.use('/competition', competition);
 app.use('/player', player)
 app.use('/game', game)
+app.use('/epcis', epcis)
 
 console.log("Start Server");
 // catch 404 and forward to error handler
@@ -56,4 +59,4 @@ app.use(function(err, req, res, next) {
 
 module.exports = app;
 
-//app.listen(3000);
+app.listen(3000);
