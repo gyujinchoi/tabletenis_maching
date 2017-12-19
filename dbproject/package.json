@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "async": "^2.6.0",
     "body-parser": "~1.17.1",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.4",
@@ -14,6 +15,9 @@
     "jade": "~1.11.0",
     "morgan": "~1.8.1",
     "mysql": "~2.13.0",
-    "serve-favicon": "~2.4.2"
+    "serve-favicon": "~2.4.2",
+    "sync-request": "^4.1.0",
+    "tableify": "^1.1.0",
+    "xml2json": "^0.11.0"
   }
 }
