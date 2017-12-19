@@ -5,7 +5,6 @@ var http = require("http");
 
 var epcis_url = "http://gs1ap.asuscomm.com:8447/epcis/Service/Poll/SimpleEventQuery?MATCH_epc=urn:epc:id:sgtin:";
 
-
 router.get('/epcis?',function(req,res,next){
     if(req.query.gtin) {
         var json_parse_options = {
@@ -21,8 +20,12 @@ router.get('/epcis?',function(req,res,next){
         var response = request('GET', epcis_url + req.query.gtin);
         var parser = require('xml2json');
         var json_obj = parser.toJson(response.getBody(), json_parse_options);
-        console.log(json_obj);
-        res.json(json_obj);
+        var event_list = json_obj["EPCISQueryDocumentType"]["EPCISBody"]["ns3:QueryResults"]["resultsBody"]["EventList"];
+        console.log(event_list["ObjectEvent"]);
+        //res.json(event_list);
+        //res.send(html_str);
+        res.render('epcis',  {"iNames": ["A", "B", "C"], "iValues":["a", "b", "c"]});
+
     }else{
         res.status(401);
         res.json("error : epcis!");

@@ -1,0 +1,14 @@
+extends layout
+
+block content
+    div
+        table.type02
+            thead
+                tr
+                    th Name
+                    th Value
+            tbody
+                each iname, i in iNames
+                    tr
+                        td= iname
+                        td= iValues[i]
