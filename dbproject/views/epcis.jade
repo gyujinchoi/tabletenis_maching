@@ -2,18 +2,19 @@ extends layout
 
 block content
     div
-        table.type02
-            thead
-                tr
-                    th 이벤트명
-                    th= EVENTS[0].event
-            tbody
-                each iname, i in EVENTS[0].iName
-                      tr
-                          td= iname
-                          if iname == "건물 정보"
-                            td
-                                a(href='#{EVENTS[0].iValue[i]}', target='_blank') #{EVENTS[0].iValue[i]}
-                          else
-                            td= EVENTS[0].iValue[i]
+        each _event_, j in EVENTS
+            table.type02
+                thead
+                    tr
+                        th 이벤트명
+                        th= EVENTS[j].event
+                tbody
+                    each iname, i in EVENTS[j].iName
+                          tr
+                              td= iname
+                              if iname == "건물 정보"
+                                td
+                                    a(href='#{EVENTS[j].iValue[i]}', target='_blank') #{EVENTS[j].iValue[i]}
+                              else
+                                td= EVENTS[j].iValue[i]
 

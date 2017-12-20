@@ -15,14 +15,26 @@ function pickOutObjectEventItems(event) {
     var f_event = flatten(event);
     console.log(f_event);
     if (f_event["bizStep"].indexOf("receiving") >= 0) {
-        event_name = "관리비";
+        event_name = "관리비 부과";
+        item_name.push("EPC");
+        item_value.push(f_event["epcList.epc"]);
         item_name.push("관리비 부과 날짜");
-        item_value.push(event["eventTime"]);
+        item_value.push(f_event["eventTime"]);
         item_name.push("관리비 금액");
-        item_value.push(event["building:extension"]["building:generalCharges"]["building:maintenanceCharges"]);
+        item_value.push(f_event["building:extension.building:generalCharges.building:maintenanceCharges"]+"원");
+        item_name.push("전기세");
+        item_value.push(f_event["building:extension.building:individualCharges.building:electricCharges"]+"원");
+        item_name.push("수도세");
+        item_value.push(f_event["building:extension.building:individualCharges.building:waterCharges"]+"원");
+        item_name.push("난방비");
+        item_value.push(f_event["building:extension.building:individualCharges.building:heatingCharges"]+"원");
+        item_name.push("가스비");
+        item_value.push(f_event["building:extension.building:individualCharges.building:gasCharges"]+"원");
     }
     else if (f_event["bizStep"].indexOf("installing") >= 0) {
         event_name = "건물등록";
+        item_name.push("EPC");
+        item_value.push(f_event["epcList.epc"]);
         item_name.push("건물 등록일자");
         item_value.push(f_event["eventTime"]);
         item_name.push("건물 주소");
