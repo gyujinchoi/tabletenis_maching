@@ -12,12 +12,21 @@
     "cors": "^2.8.4",
     "debug": "~2.6.3",
     "express": "~4.15.2",
+    "flat": "^4.0.0",
+    "flatten": "^1.0.2",
     "jade": "~1.11.0",
+    "jade-bootstrap": "^1.0.14",
     "morgan": "~1.8.1",
     "mysql": "~2.13.0",
+    "pug": "^2.0.0-rc.4",
     "serve-favicon": "~2.4.2",
     "sync-request": "^4.1.0",
     "tableify": "^1.1.0",
     "xml2json": "^0.11.0"
-  }
+  },
+  "main": "app.js",
+  "devDependencies": {},
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }

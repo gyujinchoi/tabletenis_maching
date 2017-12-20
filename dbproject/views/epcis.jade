@@ -2,13 +2,13 @@ extends layout
 
 block content
     div
-        table.type02 Abc
+        table.type02 #{TransactionEvent[0].event}
             thead
                 tr
                     th Name
                     th Value
             tbody
-                each iname, i in iNames
-                    tr
-                        td= iname
-                        td= iValues[i]
+                  each iname, i in TransactionEvent[0].iName
+                      tr
+                          td= iname
+                          td= TransactionEvent[0].iValue[i]
