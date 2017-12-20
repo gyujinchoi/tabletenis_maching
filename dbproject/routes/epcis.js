@@ -18,7 +18,7 @@ function pickOutObjectEventItems(event) {
         event_name = "관리비 부과";
         item_name.push("EPC");
         item_value.push(f_event["epcList.epc"]);
-        item_name.push("관리비 부과 날짜");
+        item_name.push("날짜");
         item_value.push(f_event["eventTime"]);
         item_name.push("관리비 금액");
         item_value.push(f_event["building:extension.building:generalCharges.building:maintenanceCharges"]+"원");
@@ -35,7 +35,7 @@ function pickOutObjectEventItems(event) {
         event_name = "건물등록";
         item_name.push("EPC");
         item_value.push(f_event["epcList.epc"]);
-        item_name.push("건물 등록일자");
+        item_name.push("날짜");
         item_value.push(f_event["eventTime"]);
         item_name.push("건물 주소");
         item_value.push(f_event["building:extension.building:address"]+" "+f_event["building:extension.building:lotNumber"]);
@@ -64,28 +64,26 @@ function pickOutTransactionEventItems(event) {
     // console.log(f_event);
     if(f_event["bizStep"].indexOf("retail_selling")){
         event_name = "매매등록";
-        item_name.push("매매 등록 날짜");
-        item_value.push(f_event['eventTime']);
-        item_name.push("매매 상품 번호");
+        item_name.push("EPC");
         item_value.push(f_event["epcList.epc"]);
-        item_name.push("매물 등록 장소");
+        item_name.push("날짜");
+        item_value.push(f_event['eventTime']);
+        item_name.push("등록 장소");
         item_value.push(f_event["readPoint.id"]);
-        item_name.push("매물 위치");
+        item_name.push("위치");
         item_value.push(f_event["building:extension.building:commonItem.building:location"]);
-        item_name.push("매물 고유 번호");
-        item_value.push(f_event["building:extension.building:commonItem.building:documentID"]);
-        item_name.push("매물 유형");
+        item_name.push("유형");
         item_value.push(f_event["building:extension.building:contractItem.building:contractType"]);
-        item_name.push("매물 보증금");
+        item_name.push("보증금");
         item_value.push(f_event["building:extension.building:contractItem.building:contractPrice"]);
-        item_name.push("매물 월세");
+        item_name.push("월세");
         item_value.push(f_event["building:extension.building:contractItem.building:monthlyPrice"]);
-        item_name.push("부동산 중개사");
+        item_name.push("부동산명");
         item_value.push(f_event["building:extension.building:realEstateAgent.building:companyName"]);
         item_name.push("부동산 전화번호");
         item_value.push(f_event["building:extension.building:realEstateAgent.building:phoneNumber"]);
-        item_name.push("부동산 등록번호");
-        item_value.push(f_event["building:extension.building:realEstateAgent.building:registrationNumber"]);
+        item_name.push("부동산 정보");
+        item_value.push("https://www.zigbang.com/danji/agent/"+f_event["building:extension.building:realEstateAgent.building:registrationNumber"]);
         item_name.push("부동산 위치");
         item_value.push(f_event["building:extension.building:realEstateAgent.building:companyLocation"]);
     }
@@ -118,6 +116,16 @@ function parseEvent(events, event_name, event_pickout_fnc) {
     return json_o;
 }
 
+function eventSorting(first, second)
+{
+    if (first["iValue"][1] == second["iValue"][1])
+        return 0;
+    if (first["iValue"][1] < second["iValue"][1])
+        return -1;
+    else
+        return 1;
+}
+
 router.get('/epcis?',function(req,res,next){
     if(req.query.gtin) {
         var json_parse_options = {
@@ -134,18 +142,29 @@ router.get('/epcis?',function(req,res,next){
         var parser = require('xml2json');
         var json_obj = parser.toJson(response.getBody(), json_parse_options);
         var event_list = json_obj["EPCISQueryDocumentType"]["EPCISBody"]["ns3:QueryResults"]["resultsBody"]["EventList"];
-        var json_trascation = {};
+        var json_events = [];
+        var json_transactons = [];
+        var json_objects = [];
+        var idx = 0;
 
         console.log("a");
         console.log(event_list);
         console.log("b");
 
         if (event_list["TransactionEvent"] != undefined)
-            json_trascation = parseEvent(event_list["TransactionEvent"], "TransactionEvent", pickOutTransactionEventItems);
+            json_transactons = parseEvent(event_list["TransactionEvent"], "TransactionEvent", pickOutTransactionEventItems);
         if (event_list["ObjectEvent"] != undefined)
-            json_trascation = parseEvent(event_list["ObjectEvent"], "ObjectEvent", pickOutObjectEventItems);
-        console.log(json_trascation);
-        res.render('epcis',  {EVENTS:json_trascation});
+            json_objects = parseEvent(event_list["ObjectEvent"], "ObjectEvent", pickOutObjectEventItems);
+
+        for(; idx < json_transactons.length; idx++)
+            json_events[idx] = json_transactons[idx];
+
+        for(var oi = 0; oi < json_objects.length; oi++, idx++)
+            json_events[idx] = json_objects[oi];
+
+        console.log(json_events);
+        json_events.sort(eventSorting);
+        res.render('epcis',  {EVENTS:json_events});
     }else{
         res.status(401);
         res.json("error : epcis!");

@@ -12,7 +12,7 @@ block content
                     each iname, i in EVENTS[j].iName
                           tr
                               td= iname
-                              if iname == "건물 정보"
+                              if iname == "건물 정보" || iname == "부동산 정보"
                                 td
                                     a(href='#{EVENTS[j].iValue[i]}', target='_blank') #{EVENTS[j].iValue[i]}
                               else
