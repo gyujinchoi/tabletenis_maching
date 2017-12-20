@@ -4,6 +4,10 @@ var async = require('async');
 var http = require("http");
 var flatten = require('flat');
 
+/* GET home page. */
+// router.get('/', function(req, res, next) {
+//     res.render('../node_modules/jade-bootstrap/layouts/bootswatch.pug', { title: 'Express' });
+// });
 
 var epcis_url = "http://gs1ap.asuscomm.com:8447/epcis/Service/Poll/SimpleEventQuery?MATCH_epc=urn:epc:id:sgtin:";
 
@@ -57,6 +61,7 @@ function parseObjectEvent(events) {
 }
 
 function pickOutTransactionEventItems(event) {
+    var items = new Array();
     var item_name = new Array();
     var item_value = new Array();
     var event_name = " - ";
@@ -67,6 +72,7 @@ function pickOutTransactionEventItems(event) {
         event_name = "매매등록";
         item_name.push("매매 등록 날짜");
         item_value.push(f_event['eventTime']);
+        // items.push(['매매'])
         item_name.push("매매 상품 번호");
         item_value.push(f_event["epcList.epc"]);
         item_name.push("매물 등록 장소");
@@ -97,6 +103,40 @@ function pickOutTransactionEventItems(event) {
 }
 
 
+function pickOutTransactionEventItems2Array(event) {
+    var items = new Array();
+    var item_name = new Array();
+    var item_value = new Array();
+    var event_name = " - ";
+    var json_o = {};
+    var f_event = flatten(event);
+    // console.log(f_event);
+    if(f_event["bizStep"].indexOf("retail_selling")){
+        event_name = "매매등록";
+        // item_name.push("매매 등록 날짜");
+        // item_value.push(f_event['eventTime']);
+        items.push(['매매 상품 번호',f_event["epcList.epc"] ]);
+        items.push(['매매 등록 날짜', f_event['eventTime']]);
+        items.push(['매물 등록 장소', f_event["readPoint.id"]]);
+        items.push(['매물 위치',f_event["building:extension.building:commonItem.building:location"]]);
+
+        items.push(['매물 고유 번호',f_event["building:extension.building:commonItem.building:documentID"] ]);
+        items.push(['매물 유형', f_event["building:extension.building:contractItem.building:contractType"]]);
+        items.push(['매물 보증금', f_event["building:extension.building:contractItem.building:contractPrice"]]);
+        items.push(['매물 월세', f_event["building:extension.building:contractItem.building:monthlyPrice"]]);
+        items.push(['부동산 중개사', f_event["building:extension.building:realEstateAgent.building:companyName"]]);
+        items.push(['부동산 전화번호', f_event["building:extension.building:realEstateAgent.building:phoneNumber"]]);
+        items.push(['부동산 등록번호', f_event["building:extension.building:realEstateAgent.building:registrationNumber"]]);
+        items.push(['부동산 위치', f_event["building:extension.building:realEstateAgent.building:companyLocation"]]);
+    }
+    json_o["event"] = event_name;
+    json_o["iName"] = items;
+    // console.log(items);
+    // json_o["iValue"] = item_value;
+    return json_o;
+}
+
+
 function parseTransactionEvent(events) {
     var max_i = 0;
     var event_l = [];
@@ -106,12 +146,12 @@ function parseTransactionEvent(events) {
         max_i = events.length;
 
     if (max_i == 0) {
-        event_l[0] = pickOutTransactionEventItems(events);
+        event_l[0] = pickOutTransactionEventItems2Array(events);
         json_o["TransactionEvent"][0] = event_l[0];
     }
     else
         for (var i =0; i < max_i; i++) {
-            event_l[i] = pickOutTransactionEventItems(events[i]);
+            event_l[i] = pickOutTransactionEventItems2Array(events[i]);
             json_o["TransactionEvent"][i] = event_l[i];
         }
 
@@ -120,7 +160,7 @@ function parseTransactionEvent(events) {
     return json_o;
 }
 
-router.get('/epcis?',function(req,res,next){
+router.get('/epcis_main?',function(req,res,next){
     if(req.query.gtin) {
         var json_parse_options = {
             object: true,
@@ -137,8 +177,9 @@ router.get('/epcis?',function(req,res,next){
         var json_obj = parser.toJson(response.getBody(), json_parse_options);
         var event_list = json_obj["EPCISQueryDocumentType"]["EPCISBody"]["ns3:QueryResults"]["resultsBody"]["EventList"];
         // parseTransactionEvent(event_list["TransactionEvent"]);
-        var json_trascation = parseTransactionEvent(event_list["TransactionEvent"][0]);
-        res.render('epcis',  parseTransactionEvent(event_list["TransactionEvent"][0]));
+        var json_trascation = parseTransactionEvent(event_list["TransactionEvent"]);
+        console.log(parseTransactionEvent(event_list["TransactionEvent"]));
+        res.render('epcis_main.pug',  parseTransactionEvent(event_list["TransactionEvent"]));
 
 
     }else{
@@ -147,8 +188,8 @@ router.get('/epcis?',function(req,res,next){
     }
 });
 
-
-
-
+// router.get('/', function(req, res, next) {
+//     res.render('epcis_main.pug', { title: 'Express' });
+// });
 
 module.exports = router;

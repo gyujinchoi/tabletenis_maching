@@ -11,6 +11,7 @@ var users = require('./routes/users');
 var competition = require('./routes/competition');
 var player = require('./routes/player');
 var game = require('./routes/game');
+var epcis_main = require('./routes/epcis_main');
 
 var epcis = require('./routes/epcis');
 
@@ -37,6 +38,7 @@ app.use('/competition', competition);
 app.use('/player', player)
 app.use('/game', game)
 app.use('/epcis', epcis)
+app.use('/epcis_main', epcis_main)
 
 console.log("Start Server");
 // catch 404 and forward to error handler
@@ -59,4 +61,4 @@ app.use(function(err, req, res, next) {
 
 module.exports = app;
 
-app.listen(3000);
+app.listen(3001);
