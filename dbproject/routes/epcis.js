@@ -12,47 +12,34 @@ function pickOutObjectEventItems(event) {
     var item_value = new Array();
     var event_name = " - ";
     var json_o = {};
-    if (event["bizStep"].indexOf("receiving")) {
+    var f_event = flatten(event);
+    console.log(f_event);
+    if (f_event["bizStep"].indexOf("receiving") >= 0) {
         event_name = "관리비";
         item_name.push("관리비 부과 날짜");
         item_value.push(event["eventTime"]);
         item_name.push("관리비 금액");
         item_value.push(event["building:extension"]["building:generalCharges"]["building:maintenanceCharges"]);
     }
-    else if (event["bizStep"].indexOf("installing")) {
+    else if (f_event["bizStep"].indexOf("installing") >= 0) {
         event_name = "건물등록";
         item_name.push("건물 등록일자");
-        item_value.push(event["eventTime"]);
+        item_value.push(f_event["eventTime"]);
+        item_name.push("건물 주소");
+        item_value.push(f_event["building:extension.building:address"]+" "+f_event["building:extension.building:lotNumber"]);
+        item_name.push("건물 도로명 주소");
+        item_value.push(f_event["building:extension.building:roadAddress"]);
+        item_name.push("경도");
+        item_value.push(f_event["building:extension.building:hardness"]);
+        item_name.push("위도");
+        item_value.push(f_event["building:extension.building:latitude"]);
+        item_name.push("건물 정보");
+        item_value.push("https://www.zigbang.com/danji/"+f_event["building:extension.building:buildingNo"]);
     }
 
     json_o["event"] = event_name;
     json_o["iName"] = item_name;
     json_o["iValue"] = item_value;
-    return json_o;
-}
-
-
-
-function parseObjectEvent(events) {
-    var max_i = 0;
-    var event_l = [];
-    var json_o = {};
-    json_o["ObjectEvent"] = [];
-    if (Array.isArray(events))
-        max_i = events.length;
-
-    if (max_i == 0) {
-        event_l[0] = pickOutObjectEventItems(events);
-        json_o["ObjectEvent"][0] = event_l[0];
-    }
-    else
-        for (var i =0; i < max_i; i++) {
-            event_l[i] = pickOutObjectEventItems(events[i]);
-            json_o["ObjectEvent"][i] = event_l[i];
-        }
-
-    console.log(json_o["ObjectEvent"][0]["iName"]);
-    console.log(json_o["ObjectEvent"][0]["iValue"]);
     return json_o;
 }
 
@@ -96,23 +83,22 @@ function pickOutTransactionEventItems(event) {
     return json_o;
 }
 
-
-function parseTransactionEvent(events) {
+function parseEvent(events, event_name, event_pickout_fnc) {
     var max_i = 0;
     var event_l = [];
-    var json_o = {};
-    json_o["TransactionEvent"] = [];
+    var json_o = [];
+    //json_o[event_name] = [];
     if (Array.isArray(events))
         max_i = events.length;
 
     if (max_i == 0) {
-        event_l[0] = pickOutTransactionEventItems(events);
-        json_o["TransactionEvent"][0] = event_l[0];
+        event_l[0] = event_pickout_fnc(events);
+        json_o[0] = event_l[0];
     }
     else
         for (var i =0; i < max_i; i++) {
-            event_l[i] = pickOutTransactionEventItems(events[i]);
-            json_o["TransactionEvent"][i] = event_l[i];
+            event_l[i] = event_pickout_fnc(events[i]);
+            json_o[i] = event_l[i];
         }
 
     // console.log(json_o["TransactionEvent"][0]["iName"]);
@@ -136,11 +122,18 @@ router.get('/epcis?',function(req,res,next){
         var parser = require('xml2json');
         var json_obj = parser.toJson(response.getBody(), json_parse_options);
         var event_list = json_obj["EPCISQueryDocumentType"]["EPCISBody"]["ns3:QueryResults"]["resultsBody"]["EventList"];
-        // parseTransactionEvent(event_list["TransactionEvent"]);
-        var json_trascation = parseTransactionEvent(event_list["TransactionEvent"][0]);
-        res.render('epcis',  parseTransactionEvent(event_list["TransactionEvent"][0]));
+        var json_trascation = {};
 
+        console.log("a");
+        console.log(event_list);
+        console.log("b");
 
+        if (event_list["TransactionEvent"] != undefined)
+            json_trascation = parseEvent(event_list["TransactionEvent"], "TransactionEvent", pickOutTransactionEventItems);
+        if (event_list["ObjectEvent"] != undefined)
+            json_trascation = parseEvent(event_list["ObjectEvent"], "ObjectEvent", pickOutObjectEventItems);
+        console.log(json_trascation);
+        res.render('epcis',  {EVENTS:json_trascation});
     }else{
         res.status(401);
         res.json("error : epcis!");

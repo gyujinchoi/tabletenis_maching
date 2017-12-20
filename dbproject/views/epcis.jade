@@ -2,13 +2,18 @@ extends layout
 
 block content
     div
-        table.type02 #{TransactionEvent[0].event}
+        table.type02
             thead
                 tr
-                    th Name
-                    th Value
+                    th 이벤트명
+                    th= EVENTS[0].event
             tbody
-                each iname, i in TransactionEvent[0].iName
+                each iname, i in EVENTS[0].iName
                       tr
                           td= iname
-                          td= TransactionEvent[0].iValue[i]
+                          if iname == "건물 정보"
+                            td
+                                a(href='#{EVENTS[0].iValue[i]}', target='_blank') #{EVENTS[0].iValue[i]}
+                          else
+                            td= EVENTS[0].iValue[i]
+
