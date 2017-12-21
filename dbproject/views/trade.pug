@@ -1,0 +1,28 @@
+extends ../node_modules/jade-bootstrap/_bootstrap
+append styles
+    // Custom styles for this template
+    link(href='../css/carousel.css', rel='stylesheet')
+block body
+
+    div
+        center
+            h1 매물 목록
+            br
+            .row
+            each _event_, j in EVENTS
+                hr.featurette-divider
+                if j%4 == 0
+                    if _event_.iName[11] == "건물ID"
+                        img.img-thumbnail(src='https://ic.zigbang.com/profile/apartment/'+_event_.iValue[11]+"/profile.jpg", width='180', height='180')
+                    else
+                        img.img-thumbnail(src='https://ic.zigbang.com/profile/apartment/'+"19115"+"/profile.jpg", width='180', height='180')
+                else if j%4 == 1
+                    img.img-thumbnail(src='https://ic.zigbang.com/profile/apartment/'+"26869"+"/profile.jpg", width='180', height='180')
+                else if j % 4 == 2
+                    img.img-thumbnail(src='https://ic.zigbang.com/profile/apartment/' + "19115" + "/profile.jpg", width='180', height='180')
+                else if j % 4 == 3
+                    img.img-thumbnail(src='https://ic.zigbang.com/profile/apartment/' + "18160" + "/profile.jpg", width='180', height='180')
+                h4= _event_.iValue[5]
+                h4= _event_.iValue[6]
+                h4= _event_.iValue[7]+" ("+_event_.iValue[8]+")"
+                a.btn.btn-default(href='./eventid?eventid='+_event_.iValue[1]+'&sgtin='+_event_.iValue[0]+'&time='+_event_.iValue[2], role='button') 상세정보 »

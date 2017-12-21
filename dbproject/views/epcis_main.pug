@@ -10,7 +10,7 @@ block body
             br
             each _event_, j in EVENTS
                     if j > 0
-                        img.img-circle(src='../down-arrow.gif', width='80', height='80')
+                        img.img-circle(src='../down-arrow.gif')
                         br
                     if _event_.event == "건물등록"
                         img.img-circle(src='../1_construction.png', alt='Generic placeholder image', width='80', height='80')
@@ -30,5 +30,5 @@ block body
                     br
                     button.btn.btn-lg.btn-warning(type='button') #{_event_.iValue[2].substr(0,10)}
                     h4= _event_.event
-                    a.btn.btn-default(href='./eventid?eventid='+_event_.iValue[1], role='button') details »
+                    a.btn.btn-default(href='./eventid?eventid='+_event_.iValue[1]+'&sgtin='+_event_.iValue[0]+'&time='+_event_.iValue[2], role='button') details »
                     br

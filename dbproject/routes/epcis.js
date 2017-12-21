@@ -52,6 +52,32 @@ function pickOutObjectEventItems(event) {
         item_value.push(f_event["building:extension.building:latitude"]);
         item_name.push("건물 정보");
         item_value.push("https://www.zigbang.com/danji/"+f_event["building:extension.building:buildingNo"]);
+    }else if (f_event["bizStep"].indexOf("repairing") >= 0) {
+        event_name = "유지보수";
+        item_name.push("EPC");
+        item_value.push(f_event["epcList.epc"]);
+        item_name.push("Event ID");
+        item_value.push(f_event["baseExtension.eventID"]);
+        item_name.push("날짜");
+        item_value.push(f_event["eventTime"]);
+        item_name.push("대상");
+        item_value.push(f_event["building:extension.building:repairingInformation.building:repairingType"]);
+        item_name.push("내역");
+        item_value.push(f_event["building:extension.building:repairingInformation.building:constructionType"]);
+        item_name.push("작업내용");
+        item_value.push(f_event["building:extension.building:repairingInformation.building:repairingMethod"]);
+        item_name.push("기간");
+        item_value.push(f_event["building:extension.building:repairingInformation.building:repaircycleYear"]+"년");
+        item_name.push("결과");
+        item_value.push(f_event["building:extension.building:repairingInformation.building:repairingDescription"]);
+    }else if (f_event["bizStep"].indexOf("destroying") >= 0) {
+        event_name = "건물삭제";
+        item_name.push("EPC");
+        item_value.push(f_event["epcList.epc"]);
+        item_name.push("Event ID");
+        item_value.push(f_event["baseExtension.eventID"]);
+        item_name.push("날짜");
+        item_value.push(f_event["eventTime"]);
     }
 
     json_o["event"] = event_name;
@@ -85,15 +111,15 @@ function pickOutTransactionEventItems(event) {
         if (contractType == "월세") {
             item_name.push("보증금");
             item_name.push("월세");
+            item_value.push(f_event["building:extension.building:contractItem.building:contractPrice"]);
+            item_value.push(f_event["building:extension.building:contractItem.building:monthlyPrice"]);
         }else if (contractType  ==  "전세") {
             item_name.push("전세금");
-            item_name.push("-");
+            item_value.push(f_event["building:extension.building:contractItem.building:contractPrice"]);
         } else {
             item_name.push("매매가");
-            item_name.push("-");
+            item_value.push(f_event["building:extension.building:contractItem.building:contractPrice"]);
         }
-        item_value.push(f_event["building:extension.building:contractItem.building:contractPrice"]);
-        item_value.push(f_event["building:extension.building:contractItem.building:monthlyPrice"]);
         item_name.push("부동산명");
         item_value.push(f_event["building:extension.building:realEstateAgent.building:companyName"]);
         item_name.push("부동산 전화번호");
@@ -102,6 +128,8 @@ function pickOutTransactionEventItems(event) {
         item_value.push("https://www.zigbang.com/danji/agent/"+f_event["building:extension.building:realEstateAgent.building:registrationNumber"]);
         item_name.push("부동산 위치");
         item_value.push(f_event["building:extension.building:realEstateAgent.building:companyLocation"]);
+        item_name.push("건물ID");
+        item_value.push(f_event["building:extension.building:commonItem.building:buildingNo"]);
     }
     json_o["event"] = event_name;
     json_o["iName"] = item_name;
@@ -142,7 +170,7 @@ function eventSorting(first, second)
         return 1;
 }
 
-function querySGtin(url, gtin) {
+function queryEPCIS(url) {
     var json_parse_options = {
         object: true,
         reversible: false,
@@ -153,7 +181,7 @@ function querySGtin(url, gtin) {
         alternateTextNode: false
     };
     var request = require('sync-request');
-    var response = request('GET', url + gtin);
+    var response = request('GET', url);
     var parser = require('xml2json');
     var json_obj = parser.toJson(response.getBody(), json_parse_options);
     var event_list = json_obj["EPCISQueryDocumentType"]["EPCISBody"]["ns3:QueryResults"]["resultsBody"]["EventList"];
@@ -184,7 +212,7 @@ function querySGtin(url, gtin) {
 
 router.get('/epcis?',function(req,res,next){
     if(req.query.gtin) {
-        var results = querySGtin(epcis_url, req.query.gtin)
+        var results = queryEPCIS(epcis_url+req.query.gtin)
         res.render('epcis',  {EVENTS:results[0]});
     }else{
         res.status(401);
@@ -194,7 +222,7 @@ router.get('/epcis?',function(req,res,next){
 
 router.get('/history?',function(req,res,next){
     if(req.query.gtin) {
-        var results = querySGtin(epcis_url, req.query.gtin)
+        var results = queryEPCIS(epcis_url+req.query.gtin)
         res.render('epcis_main.pug',  {EVENTS:results[0]});
     }else{
         res.status(401);
@@ -204,7 +232,7 @@ router.get('/history?',function(req,res,next){
 
 router.get('/eventid?',function(req,res,next){
     if(req.query.eventid) {
-        var results = querySGtin(epcis_event_id_url, req.query.eventid)
+        var results = queryEPCIS(epcis_event_id_url+req.query.eventid+'&GE_eventTime='+req.query.time+"&MATCH_epc="+req.query.sgtin)
         res.render('epcis',  {EVENTS:results[0]});
     }else{
         res.status(401);
@@ -212,6 +240,14 @@ router.get('/eventid?',function(req,res,next){
     }
 });
 
-
+router.get('/trade?',function(req,res,next){
+    if(req.query.gtin) {
+        var results = queryEPCIS(epcis_url+req.query.gtin)
+        res.render('trade.pug',  {EVENTS:results[1]});
+    }else{
+        res.status(401);
+        res.json("error : epcis!");
+    }
+});
 
 module.exports = router;
