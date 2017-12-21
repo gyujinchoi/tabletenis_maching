@@ -185,7 +185,6 @@ router.get('/epcis?',function(req,res,next){
     }
 });
 
-0 0 "U" "http://gs1ap.asuscomm.com:8447/servicetype/xml/servicetype.xml" "!^.*$!http://52.79.188.98:3000/epcis/history?gtin=[sgtin]!" .
 router.get('/history?',function(req,res,next){
     if(req.query.gtin) {
         var results = querySGtin(req.query.gtin)
