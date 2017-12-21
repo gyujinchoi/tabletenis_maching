@@ -62,7 +62,7 @@ function pickOutTransactionEventItems(event) {
     var json_o = {};
     var f_event = flatten(event);
     // console.log(f_event);
-    if(f_event["bizStep"].indexOf("retail_selling")){
+    if(f_event["bizStep"].indexOf("retail_selling")) {
         event_name = "매매등록";
         item_name.push("EPC");
         item_value.push(f_event["epcList.epc"]);
@@ -74,9 +74,18 @@ function pickOutTransactionEventItems(event) {
         item_value.push(f_event["building:extension.building:commonItem.building:location"]);
         item_name.push("유형");
         item_value.push(f_event["building:extension.building:contractItem.building:contractType"]);
-        item_name.push("보증금");
+        var contractType = f_event["building:extension.building:contractItem.building:contractType"];
+        if (contractType == "월세") {
+            item_name.push("보증금");
+            item_name.push("월세");
+        }else if (contractType  ==  "전세") {
+            item_name.push("전세금");
+            item_name.push("-");
+        } else {
+            item_name.push("매매가");
+            item_name.push("-");
+        }
         item_value.push(f_event["building:extension.building:contractItem.building:contractPrice"]);
-        item_name.push("월세");
         item_value.push(f_event["building:extension.building:contractItem.building:monthlyPrice"]);
         item_name.push("부동산명");
         item_value.push(f_event["building:extension.building:realEstateAgent.building:companyName"]);
@@ -126,52 +135,66 @@ function eventSorting(first, second)
         return 1;
 }
 
+function querySGtin(gtin) {
+    var json_parse_options = {
+        object: true,
+        reversible: false,
+        coerce: false,
+        sanitize: true,
+        trim: true,
+        arrayNotation: false,
+        alternateTextNode: false
+    };
+    var request = require('sync-request');
+    var response = request('GET', epcis_url + gtin);
+    var parser = require('xml2json');
+    var json_obj = parser.toJson(response.getBody(), json_parse_options);
+    var event_list = json_obj["EPCISQueryDocumentType"]["EPCISBody"]["ns3:QueryResults"]["resultsBody"]["EventList"];
+    var json_events = [];
+    var json_transactons = [];
+    var json_objects = [];
+    var idx = 0;
+
+    console.log("a");
+    console.log(event_list);
+    console.log("b");
+
+    if (event_list["TransactionEvent"] != undefined)
+        json_transactons = parseEvent(event_list["TransactionEvent"], "TransactionEvent", pickOutTransactionEventItems);
+    if (event_list["ObjectEvent"] != undefined)
+        json_objects = parseEvent(event_list["ObjectEvent"], "ObjectEvent", pickOutObjectEventItems);
+
+    for(; idx < json_transactons.length; idx++)
+        json_events[idx] = json_transactons[idx];
+
+    for(var oi = 0; oi < json_objects.length; oi++, idx++)
+        json_events[idx] = json_objects[oi];
+
+    console.log(json_events);
+    json_events.sort(eventSorting);
+    return [json_events, json_transactons, json_objects];
+}
+
 router.get('/epcis?',function(req,res,next){
     if(req.query.gtin) {
-        var json_parse_options = {
-            object: true,
-            reversible: false,
-            coerce: false,
-            sanitize: true,
-            trim: true,
-            arrayNotation: false,
-            alternateTextNode: false
-        };
-        var request = require('sync-request');
-        var response = request('GET', epcis_url + req.query.gtin);
-        var parser = require('xml2json');
-        var json_obj = parser.toJson(response.getBody(), json_parse_options);
-        var event_list = json_obj["EPCISQueryDocumentType"]["EPCISBody"]["ns3:QueryResults"]["resultsBody"]["EventList"];
-        var json_events = [];
-        var json_transactons = [];
-        var json_objects = [];
-        var idx = 0;
-
-        console.log("a");
-        console.log(event_list);
-        console.log("b");
-
-        if (event_list["TransactionEvent"] != undefined)
-            json_transactons = parseEvent(event_list["TransactionEvent"], "TransactionEvent", pickOutTransactionEventItems);
-        if (event_list["ObjectEvent"] != undefined)
-            json_objects = parseEvent(event_list["ObjectEvent"], "ObjectEvent", pickOutObjectEventItems);
-
-        for(; idx < json_transactons.length; idx++)
-            json_events[idx] = json_transactons[idx];
-
-        for(var oi = 0; oi < json_objects.length; oi++, idx++)
-            json_events[idx] = json_objects[oi];
-
-        console.log(json_events);
-        json_events.sort(eventSorting);
-        res.render('epcis',  {EVENTS:json_events});
+        var results = querySGtin(req.query.gtin)
+        res.render('epcis',  {EVENTS:results[0]});
     }else{
         res.status(401);
         res.json("error : epcis!");
     }
 });
 
-
+0 0 "U" "http://gs1ap.asuscomm.com:8447/servicetype/xml/servicetype.xml" "!^.*$!http://52.79.188.98:3000/epcis/history?gtin=[sgtin]!" .
+router.get('/history?',function(req,res,next){
+    if(req.query.gtin) {
+        var results = querySGtin(req.query.gtin)
+        res.render('epcis_main.pug',  {EVENTS:results[0]});
+    }else{
+        res.status(401);
+        res.json("error : epcis!");
+    }
+});
 
 
 

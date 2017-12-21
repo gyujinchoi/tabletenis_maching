@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:ServiceType xmlns:tns="urn:epcglobal:ons:serviceType:xsd:1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.gs1.org/ons/xsd/1/ServiceType.xsd">
+	<ServiceTypeIdentifier>urn:autoidlabsk:sts:global:service</ServiceTypeIdentifier>
+	<Abstract>true</Abstract>
+	<Documentation>
+		<LanguageCode>ICON</LanguageCode>
+      	<Location>http://http://52.79.188.98:3000/inspection.png</Location>
+	</Documentation>
+	<Documentation>
+        <LanguageCode>DESC</LanguageCode>
+        <Location>http://gs1ap.asuscomm.com:8447/servicetype/desc/desc.html</Location>
+	</Documentation>
+</tns:ServiceType>
