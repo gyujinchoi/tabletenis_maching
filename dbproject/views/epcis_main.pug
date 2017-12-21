@@ -10,25 +10,25 @@ block body
             br
             each _event_, j in EVENTS
                     if j > 0
-                        img.img-circle(src='../down-arrow.gif')
+                        img.img-circle(src='../down-arrow.gif', width='80', height='80')
                         br
                     if _event_.event == "건물등록"
-                        img.img-circle(src='../1_construction.png', alt='Generic placeholder image', width='140', height='140')
+                        img.img-circle(src='../1_construction.png', alt='Generic placeholder image', width='80', height='80')
                     else if _event_.event == "매매등록" || _event_.event == "매매완료"
                         if _event_.iValue[4] == "매매"
-                            img.img-circle(src='../2_selling.png', alt='Generic placeholder image', width='140', height='140')
+                            img.img-circle(src='../2_selling.png', alt='Generic placeholder image', width='80', height='140')
                         else
-                            img.img-circle(src='../3_renting.png', alt='Generic placeholder image', width='140', height='140')
+                            img.img-circle(src='../3_renting.png', alt='Generic placeholder image', width='80', height='80')
                     else if _event_.event == "관리비 부과"
-                        img.img-circle(src='../5_energy.png', alt='Generic placeholder image', width='140', height='140')
+                        img.img-circle(src='../5_energy.png', alt='Generic placeholder image', width='80', height='80')
                     else if _event_.event == "유지보수"
-                        img.img-circle(src='../4_maintenance.png', alt='Generic placeholder image', width='140', height='140')
+                        img.img-circle(src='../4_maintenance.png', alt='Generic placeholder image', width='80', height='80')
                     else if _event_.event == "주변시설"
-                        img.img-circle(src='../6_facilities.png', alt='Generic placeholder image', width='140', height='140')
+                        img.img-circle(src='../6_facilities.png', alt='Generic placeholder image', width='80', height='80')
                     else if _event_.event == "건물삭제"
-                        img.img-circle(src='../7_demolition.png', alt='Generic placeholder image', width='140', height='140')
+                        img.img-circle(src='../7_demolition.png', alt='Generic placeholder image', width='80', height='80')
                     br
                     button.btn.btn-lg.btn-warning(type='button') #{_event_.iValue[2].substr(0,10)}
-                    h3= _event_.event
+                    h4= _event_.event
                     a.btn.btn-default(href='./eventid?eventid='+_event_.iValue[1], role='button') details »
                     br
