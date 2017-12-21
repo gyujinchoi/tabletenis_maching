@@ -6,6 +6,7 @@ var flatten = require('flat');
 
 
 var epcis_url = "http://gs1ap.asuscomm.com:8447/epcis/Service/Poll/SimpleEventQuery?MATCH_epc=urn:epc:id:sgtin:";
+var epcis_event_id_url = "http://gs1ap.asuscomm.com:8447/epcis/Service/Poll/SimpleEventQuery?EQ_eventID=";
 
 function pickOutObjectEventItems(event) {
     var item_name = new Array();
@@ -18,6 +19,8 @@ function pickOutObjectEventItems(event) {
         event_name = "관리비 부과";
         item_name.push("EPC");
         item_value.push(f_event["epcList.epc"]);
+        item_name.push("Event ID");
+        item_value.push(f_event["baseExtension.eventID"]);
         item_name.push("날짜");
         item_value.push(f_event["eventTime"]);
         item_name.push("관리비 금액");
@@ -35,6 +38,8 @@ function pickOutObjectEventItems(event) {
         event_name = "건물등록";
         item_name.push("EPC");
         item_value.push(f_event["epcList.epc"]);
+        item_name.push("Event ID");
+        item_value.push(f_event["baseExtension.eventID"]);
         item_name.push("날짜");
         item_value.push(f_event["eventTime"]);
         item_name.push("건물 주소");
@@ -66,6 +71,8 @@ function pickOutTransactionEventItems(event) {
         event_name = "매매등록";
         item_name.push("EPC");
         item_value.push(f_event["epcList.epc"]);
+        item_name.push("Event ID");
+        item_value.push(f_event["baseExtension.eventID"]);
         item_name.push("날짜");
         item_value.push(f_event['eventTime']);
         item_name.push("등록 장소");
@@ -135,7 +142,7 @@ function eventSorting(first, second)
         return 1;
 }
 
-function querySGtin(gtin) {
+function querySGtin(url, gtin) {
     var json_parse_options = {
         object: true,
         reversible: false,
@@ -146,7 +153,7 @@ function querySGtin(gtin) {
         alternateTextNode: false
     };
     var request = require('sync-request');
-    var response = request('GET', epcis_url + gtin);
+    var response = request('GET', url + gtin);
     var parser = require('xml2json');
     var json_obj = parser.toJson(response.getBody(), json_parse_options);
     var event_list = json_obj["EPCISQueryDocumentType"]["EPCISBody"]["ns3:QueryResults"]["resultsBody"]["EventList"];
@@ -177,7 +184,7 @@ function querySGtin(gtin) {
 
 router.get('/epcis?',function(req,res,next){
     if(req.query.gtin) {
-        var results = querySGtin(req.query.gtin)
+        var results = querySGtin(epcis_url, req.query.gtin)
         res.render('epcis',  {EVENTS:results[0]});
     }else{
         res.status(401);
@@ -187,8 +194,18 @@ router.get('/epcis?',function(req,res,next){
 
 router.get('/history?',function(req,res,next){
     if(req.query.gtin) {
-        var results = querySGtin(req.query.gtin)
+        var results = querySGtin(epcis_url, req.query.gtin)
         res.render('epcis_main.pug',  {EVENTS:results[0]});
+    }else{
+        res.status(401);
+        res.json("error : epcis!");
+    }
+});
+
+router.get('/eventid?',function(req,res,next){
+    if(req.query.eventid) {
+        var results = querySGtin(epcis_event_id_url, req.query.eventid)
+        res.render('epcis',  {EVENTS:results[0]});
     }else{
         res.status(401);
         res.json("error : epcis!");

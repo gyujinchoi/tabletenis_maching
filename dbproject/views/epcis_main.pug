@@ -28,7 +28,7 @@ block body
                     else if _event_.event == "건물삭제"
                         img.img-circle(src='../7_demolition.png', alt='Generic placeholder image', width='140', height='140')
                     br
-                    button.btn.btn-lg.btn-warning(type='button') #{_event_.iValue[1].substr(0,10)}
+                    button.btn.btn-lg.btn-warning(type='button') #{_event_.iValue[2].substr(0,10)}
                     h3= _event_.event
-                    a.btn.btn-default(href='#', role='button') details »
+                    a.btn.btn-default(href='./eventid?eventid='+_event_.iValue[1], role='button') details »
                     br
